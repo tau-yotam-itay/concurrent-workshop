@@ -6,3 +6,9 @@
 /.vs/concurrent-workshop/v15/Browse.VC.opendb
 /.vs/concurrent-workshop/v15/Browse.VC.db
 /.vs/concurrent-workshop/v15
+/Debug
+/Concurrent_Workshop.vcxproj.user
+/Concurrent_Workshop.vcxproj.filters
+/Concurrent_Workshop.vcxproj
+/Concurrent_Workshop.sln
+/.vs

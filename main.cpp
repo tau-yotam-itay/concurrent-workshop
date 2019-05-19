@@ -14,6 +14,5 @@ int main(int argc, const char * argv[]) {
     Graph g(argv[1]);
     g.print_graph();
     return 0;
-	
 }
 
