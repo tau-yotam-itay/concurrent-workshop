@@ -7,9 +7,12 @@
 //
 
 #include <iostream>
+#include "graph.cpp"
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-    std::cout << "Hello, World!\n";
+    Graph g(argv[1]);
+    g.print_graph();
     return 0;
 }
+
