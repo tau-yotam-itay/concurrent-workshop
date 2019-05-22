@@ -36,13 +36,13 @@ public:
 	Vertex* get_vertex() {
 		return v;
 	}
-	BH_Node* get_parent(BH_Node* node) {
+	BH_Node* get_parent() {
 		return parent;
 	}
-	BH_Node* get_left(BH_Node* node) {
+	BH_Node* get_left() {
 		return left;
 	}
-	BH_Node* get_right(BH_Node* node) {
+	BH_Node* get_right() {
 		return right;
 	}
 	void set_parent(BH_Node* node) {
@@ -60,13 +60,28 @@ public:
     BH_Node* predecessor(){
         return NULL;
     }
+    bool is_leaf(){
+        return (!left && !right);
+    }
 };
 
 class Binary_Heap {
 private:
 	BH_Node* min_node;
 	BH_Node* last_node;
-
+    
+    void swap(BH_Node* child,BH_Node* parent){
+        bool is_child_left = (parent->get_left() == child);
+        bool is_parent_left = (parent->get_parent()->get_left() == parent);
+        child->set_parent(parent->get_parent());
+        BH_Node* temp;
+    }
+    
+    void heapify_up(BH_Node* node){
+        while(node->get_dist() < node->get_parent()->get_dist()){
+            swap(node, node->get_parent());
+        }
+    }
 //heapify_up,heapify_down
 public:
 	volatile bool lock;
@@ -84,8 +99,18 @@ public:
 		return last_node;
 	}
 */
-	void insert(BH_Node) {
-        
+
+	void insert(BH_Node* node) {
+        BH_Node* last_successor = last_node->successor();
+        if(last_successor->is_leaf()){
+            last_successor->set_left(node);
+        }
+        else{
+            last_successor->set_right(node);
+        }
+        node->set_parent(last_successor);
+        last_node = node;
+        this->heapify_up(node);
 	}
 
 private:
