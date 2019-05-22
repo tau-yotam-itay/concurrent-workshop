@@ -54,6 +54,12 @@ public:
 	void set_right(BH_Node* node) {
 		right = node;
 	}
+    BH_Node* successor(){
+        return NULL;
+    }
+    BH_Node* predecessor(){
+        return NULL;
+    }
 };
 
 class Binary_Heap {
@@ -79,7 +85,7 @@ public:
 	}
 */
 	void insert(BH_Node) {
-
+        
 	}
 
 private:
