@@ -1,9 +1,20 @@
-#include "graph.cpp"
+#include "multi_queue.hpp"
 
-#define P = 80
-#define C = 2
+class Multi_Queue {
+private:
+	int C;
+	int P;
+public:
+	Binary_Heap** queues_array;
 
-Queue Multi_Queue[C*P];
+	Multi_Queue(int c, int p) {
+		P = p;
+		C = c;
+		queues_array = new Binary_Heap*[C*P];
+	}
+	//insert, extract_min
+
+};
 
 void insert(Vertex* v) {
 	bool successful_lock = false;
