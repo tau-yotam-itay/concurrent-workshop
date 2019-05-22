@@ -55,22 +55,22 @@ public:
 		right = node;
 	}
     BH_Node* successor(){
-		BH_Node* parent = this->get_parent;
+		BH_Node* parent = this->get_parent();
 		BH_Node* curr_node = this;
 
-		while (curr_node->parent != NULL && parent->get_left != curr_node) {	//go up until  last edge used was a left edge
+		while (curr_node->parent != NULL && parent->get_left() != curr_node) {	//go up until  last edge used was a left edge
 			curr_node = parent;
-			parent = parent->get_parent;
+			parent = parent->get_parent();
 		}
 
-		curr_node = curr_node->get_right;	//go right
+		curr_node = curr_node->get_right();	//go right
 
 		while (true) {	//go left until reach a leaf
-			if (curr_node->get_left != NULL) {
-				curr_node = curr_node->get_left;
+			if (curr_node->get_left() != NULL) {
+				curr_node = curr_node->get_left();
 			}
-			else if (curr_node->get_right != NULL) {	//impossible with full tree
-				curr_node = curr_node->get_right;
+			else if (curr_node->get_right() != NULL) {	//impossible with full tree
+				curr_node = curr_node->get_right();
 			}
 			else {
 				return curr_node;
@@ -79,22 +79,22 @@ public:
     }
 
     BH_Node* predecessor(){
-		BH_Node* parent = this->get_parent;
+		BH_Node* parent = this->get_parent();
 		BH_Node* curr_node = this;
 
-		while (curr_node->parent != NULL && parent->get_right != curr_node) {	//go up until last edge used was a right edge
+		while (curr_node->parent != NULL && parent->get_right() != curr_node) {	//go up until last edge used was a right edge
 			curr_node = parent;
-			parent = parent->get_parent;
+			parent = parent->get_parent();
 		}
 
-		curr_node = curr_node->get_left;	//go left
+		curr_node = curr_node->get_left();	//go left
 
 		while (true) {	//go right until reach leaf
-			if (curr_node->get_right != NULL) {
-				curr_node = curr_node->get_right;
+			if (curr_node->get_right() != NULL) {
+				curr_node = curr_node->get_right();
 			}
-			else if (curr_node->get_left != NULL) {	//impossible with full tree
-				curr_node = curr_node->get_left;
+			else if (curr_node->get_left() != NULL) {	//impossible with full tree
+				curr_node = curr_node->get_left();
 			}
 			else {
 				return curr_node;
