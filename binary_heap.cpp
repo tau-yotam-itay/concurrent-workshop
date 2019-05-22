@@ -55,10 +55,51 @@ public:
 		right = node;
 	}
     BH_Node* successor(){
-        return NULL;
+		BH_Node* parent = this->get_parent;
+		BH_Node* curr_node = this;
+
+		while (curr_node->parent != NULL && parent->get_left != curr_node) {	//go up until  last edge used was a left edge
+			curr_node = parent;
+			parent = parent->get_parent;
+		}
+
+		curr_node = curr_node->get_right;	//go right
+
+		while (true) {	//go left until reach a leaf
+			if (curr_node->get_left != NULL) {
+				curr_node = curr_node->get_left;
+			}
+			else if (curr_node->get_right != NULL) {	//impossible with full tree
+				curr_node = curr_node->get_right;
+			}
+			else {
+				return curr_node;
+			}
+		}
     }
+
     BH_Node* predecessor(){
-        return NULL;
+		BH_Node* parent = this->get_parent;
+		BH_Node* curr_node = this;
+
+		while (curr_node->parent != NULL && parent->get_right != curr_node) {	//go up until last edge used was a right edge
+			curr_node = parent;
+			parent = parent->get_parent;
+		}
+
+		curr_node = curr_node->get_left;	//go left
+
+		while (true) {	//go right until reach leaf
+			if (curr_node->get_right != NULL) {
+				curr_node = curr_node->get_right;
+			}
+			else if (curr_node->get_left != NULL) {	//impossible with full tree
+				curr_node = curr_node->get_left;
+			}
+			else {
+				return curr_node;
+			}
+		}
     }
     bool is_leaf(){
         return (!left && !right);
@@ -85,7 +126,7 @@ private:
 //heapify_up,heapify_down
 public:
 	volatile bool lock;
-//constructor, get funcs, extract_min, insert, decrease_key
+//get funcs, extract_min, insert, decrease_key
 
 	Binary_Heap() {
 		min_node = NULL;
