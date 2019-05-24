@@ -16,7 +16,6 @@ int main(int argc, const char * argv[]) {
     Graph g(argv[1]);
     g.print_graph();
 	srand(RAND_SEED);
-	sssp(g);
     return 0;
 }
 

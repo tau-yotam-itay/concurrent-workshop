@@ -54,6 +54,12 @@ public:
 	void set_right(BH_Node* node) {
 		right = node;
 	}
+    void set_vertex(Vertex* vertex) {
+        v = vertex;
+    }
+    void set_dist(int d) {
+        dist = d;
+    }
     BH_Node* successor(){
 		BH_Node* parent = this->get_parent();
 		BH_Node* curr_node = this;
@@ -111,11 +117,14 @@ private:
 	BH_Node* min_node;
 	BH_Node* last_node;
     
+    // value swap - make sure it doesnt cause external pointers problems
     void swap(BH_Node* child,BH_Node* parent){
-        bool is_child_left = (parent->get_left() == child);
-        bool is_parent_left = (parent->get_parent()->get_left() == parent);
-        child->set_parent(parent->get_parent());
-        BH_Node* temp;
+        int c_dist = child->get_dist();
+        Vertex* c_vertex = child->get_vertex();
+        child->set_dist(parent->get_dist());
+        child->set_vertex(parent->get_vertex());
+        parent->set_dist(c_dist);
+        parent->set_vertex(c_vertex);
     }
     
     void heapify_up(BH_Node* node){
@@ -123,7 +132,17 @@ private:
             swap(node, node->get_parent());
         }
     }
-//heapify_up,heapify_down
+    
+    void heapify_down(BH_Node* node){
+        if(node->get_dist() < node->get_left()->get_dist()){
+            swap(node, node->get_left());
+            heapify_down(node->get_left());
+        }
+        else if(node->get_dist() < node->get_right()->get_dist()){
+            swap(node, node->get_right());
+            heapify_down(node->get_right());
+        }
+    }
 public:
 	volatile bool lock;
 //get funcs, extract_min, insert, decrease_key
@@ -153,6 +172,15 @@ public:
         last_node = node;
         this->heapify_up(node);
 	}
+    
+    BH_Node* extract_min(){
+        swap(min_node, last_node);
+        BH_Node* min = last_node;
+        last_node = min->predecessor();
+        // verify how predecessor works here
+        // retire min
+        return min;
+    }
 
 private:
 
