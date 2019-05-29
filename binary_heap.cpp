@@ -128,8 +128,9 @@ private:
     }
     
     void heapify_up(BH_Node* node){
-        while(node->get_dist() < node->get_parent()->get_dist()){
+        while(node != min_node && node->get_dist() < node->get_parent()->get_dist()){
             swap(node, node->get_parent());
+            node = node->get_parent();
         }
     }
     
@@ -145,7 +146,7 @@ private:
     }
 public:
 	volatile bool lock;
-//get funcs, extract_min, insert, decrease_key
+//get funcs, extract_min, insert
 
 	Binary_Heap() {
 		min_node = NULL;
