@@ -14,11 +14,13 @@ using namespace std;
 class Vertex{
 private:
     int key;
+    unsigned int dist;
     neighbor* neighbors;
 public:
     Vertex(int k){
         key = k;
         neighbors = NULL;
+        dist = INT_MAX;
     }
     
     int get_key(){
