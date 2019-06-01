@@ -27,6 +27,14 @@ public:
         return key;
     };
     
+    int get_dist(){
+        return dist;
+    };
+    
+    void set_dist(int d){
+        dist = d;
+    };
+    
     void add_neighbor(Vertex* v, int weight){
         neighbor* new_neighbor = new neighbor;
         new_neighbor->v = v;

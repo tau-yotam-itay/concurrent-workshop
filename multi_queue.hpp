@@ -5,9 +5,12 @@
 #include <atomic>         // std::atomic
 #include <thread>         // std::thread
 #include <mutex>
-#include "recordmgr/record_manager.h"
+#include <tuple>
 #include <iostream>
+#include "recordmgr/record_manager.h"
 #include "binary_heap.hpp"
+
+#define C 2
 
 class Multi_Queue;
 

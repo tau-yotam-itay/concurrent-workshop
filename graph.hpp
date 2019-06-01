@@ -1,10 +1,3 @@
-//
-//  graph.hpp
-//  workshop
-//
-//  Created by Yotam Manne on 18/05/2019.
-//  Copyright © 2019 Yotam Manne. All rights reserved.
-//
 
 #ifndef graph_hpp
 #define graph_hpp
