@@ -10,7 +10,7 @@
 #include "recordmgr/record_manager.h"
 #include "binary_heap.hpp"
 
-#define C 2
+#define C_CONST 2
 
 class Multi_Queue;
 

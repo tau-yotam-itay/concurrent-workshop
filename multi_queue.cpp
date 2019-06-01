@@ -53,7 +53,7 @@ public:
 			rand_queue_index_1 = rand() % P; // +1 needed?
 			rand_queue_index_2 = rand() % P; // +1 needed?
             // make sure they are not the same index
-            }while(rand_queue_index_1 != rand_queue_index_2);
+            }while(rand_queue_index_1 == rand_queue_index_2);
 			if (queues_array[rand_queue_index_1]->get_min()->get_dist() >
 				queues_array[rand_queue_index_2]->get_min()->get_dist() ) {
 				swap(rand_queue_index_1, rand_queue_index_2);
@@ -61,7 +61,7 @@ public:
 			thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
 		} while (!thrnd_won);
 		BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
-        ret = make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());
+		tuple<Vertex*, int> ret = make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());
         destroy_node(extracted_node);
 		safe = true;
         // exit debra quiscent state

@@ -13,12 +13,13 @@ void thread_worker(Multi_Queue* Q){
             n->v->set_dist(new_dist);
             Q->insert(n->v);
         }
+		//maybe if finished node gets better distance then he is re inserted to queue? check this
         n = n->next;
     }
 }
 
 void dijkstra(Vertex*s,Graph*g){
-    Multi_Queue* Q = new Multi_Queue(C,P);
+    Multi_Queue* Q = new Multi_Queue(C_CONST,P);
     Q->insert(s);
     //init threads
     while(!Q->is_empty()){

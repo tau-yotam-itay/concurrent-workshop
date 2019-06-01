@@ -16,6 +16,7 @@ private:
     int key;
     unsigned int dist;
     neighbor* neighbors;
+
 public:
     Vertex(int k){
         key = k;
