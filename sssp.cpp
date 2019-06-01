@@ -1,23 +1,28 @@
-//
-//  sssp.cpp
-//  concurrent-workshop
-//
-//  Created by Yotam Manne on 31/05/2019.
-//  Copyright © 2019 Yotam Manne. All rights reserved.
-//
 
 #include "sssp.hpp"
 
-void thread_worker(){
-    // extract min
-    // update distances of neighbors
-    // if distance was updated - insert to q
-    // end when finished handling neighbors
+void thread_worker(Multi_Queue* Q){
+    tuple<Vertex*,int> min = Q->extract_min();
+    Vertex* v = get<0>(min);
+    int dist = get<1>(min);
+    
+    neighbor* n = v->get_neighbors();
+    while(n != NULL){                    // iterate all neighbors of v
+        int new_dist = dist + n->weight; // d' = d(n) + w(v,n)
+        if(new_dist < n->v->get_dist()){ // if distance is smaller - relax and add to Q
+            n->v->set_dist(new_dist);
+            Q->insert(n->v);
+        }
+        n = n->next;
+    }
 }
 
 void dijkstra(Vertex*s,Graph*g){
-    // init multi-queue
-    // insert s to q
-    // init threads
+    Multi_Queue* Q = new Multi_Queue(C,P);
+    Q->insert(s);
+    //init threads
+    while(!Q->is_empty()){
+        
+    }
     // while q not empty - stop main thread from quiting
 }
