@@ -1,4 +1,5 @@
 #include "multi_queue.hpp"
+#include "binary_heap.cpp" //remove this and rearrange includes!
 
 class Multi_Queue {
 private:
@@ -28,16 +29,32 @@ public:
 	}
     
     void insert(Vertex* v) {
-        bool successful_lock = false;
+        volatile bool safe;
         int rand_queue_index;
         do {
-            rand_queue_index = ( rand() % P ) + 1;
-            
-        } while (!successful_lock);
-    };
+            rand_queue_index = rand() % P; // +1 needed?
+			bool thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+        } while (!safe);
+		BH_Node* to_insert_node = new BH_Node(v);
+		queues_array[rand_queue_index]->insert(to_insert_node);
+		safe = true;
+    }
     
     BH_Node* extract_min(){
-        return NULL;
+		volatile bool safe;
+		int rand_queue_index_1, rand_queue_index_2;
+		do {
+			rand_queue_index_1 = rand() % P; // +1 needed?
+			rand_queue_index_2 = rand() % P; // +1 needed?
+			if (queues_array[rand_queue_index_1]->get_min()->get_dist() >
+				queues_array[rand_queue_index_2]->get_min()->get_dist() ) {
+				swap(rand_queue_index_1, rand_queue_index_2);
+			}
+			bool thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+		} while (!safe);
+		BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
+		safe = true;
+		return extracted_node;
     }
     
 

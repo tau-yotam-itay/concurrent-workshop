@@ -1,4 +1,5 @@
-#pragma once
+#ifndef binary_heap_hpp
+#define binary_heap_hpp
 
 #include "graph.hpp"
 #include "recordmgr/record_manager.h"
@@ -7,4 +8,4 @@
 class BH_Node;
 class Binary_Heap;
 
-
+#endif /* binary_heap_hpp */

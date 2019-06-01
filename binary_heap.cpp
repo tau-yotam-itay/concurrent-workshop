@@ -1,4 +1,3 @@
-#pragma once
 #include "binary_heap.hpp"
 #include <limits>
 
@@ -182,6 +181,10 @@ public:
         // retire min
         return min;
     }
+
+	BH_Node* get_min() {
+		return min_node;
+	}
 
 private:
 
