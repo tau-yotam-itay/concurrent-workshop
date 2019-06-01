@@ -34,7 +34,7 @@ public:
         do {
             rand_queue_index = rand() % P; // +1 needed?
 			bool thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
-        } while (!safe);
+        } while (!thrnd_won);
 		BH_Node* to_insert_node = new BH_Node(v);
 		queues_array[rand_queue_index]->insert(to_insert_node);
 		safe = true;
@@ -51,7 +51,7 @@ public:
 				swap(rand_queue_index_1, rand_queue_index_2);
 			}
 			bool thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
-		} while (!safe);
+		} while (!thrnd_won);
 		BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
 		safe = true;
 		return extracted_node;
