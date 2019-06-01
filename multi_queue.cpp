@@ -30,10 +30,11 @@ public:
     
     void insert(Vertex* v) {
         volatile bool safe;
+		bool thrnd_won;
         int rand_queue_index;
         do {
             rand_queue_index = rand() % P; // +1 needed?
-			bool thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+			thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
         } while (!thrnd_won);
 		BH_Node* to_insert_node = new BH_Node(v);
 		queues_array[rand_queue_index]->insert(to_insert_node);
@@ -42,6 +43,7 @@ public:
     
     BH_Node* extract_min(){
 		volatile bool safe;
+		bool thrnd_won;
 		int rand_queue_index_1, rand_queue_index_2;
 		do {
 			rand_queue_index_1 = rand() % P; // +1 needed?
@@ -50,7 +52,7 @@ public:
 				queues_array[rand_queue_index_2]->get_min()->get_dist() ) {
 				swap(rand_queue_index_1, rand_queue_index_2);
 			}
-			bool thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+			thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
 		} while (!thrnd_won);
 		BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
 		safe = true;
