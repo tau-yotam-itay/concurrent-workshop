@@ -1,7 +1,4 @@
-
-#ifndef graph_hpp
-#define graph_hpp
-
+#pragma once
 #include <iostream>
 #include <tuple>
 #include <string>
@@ -21,5 +18,3 @@ typedef struct vertex_list_node{
     Vertex* v;
     struct vertex_list_node* next;
 }vertex_list_node;
-
-#endif /* graph_hpp */

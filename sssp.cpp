@@ -1,5 +1,6 @@
-
+#pragma once
 #include "sssp.hpp"
+#include "sssp.cpp"
 
 void thread_worker(Multi_Queue* Q){
     tuple<Vertex*,int> min = Q->extract_min();

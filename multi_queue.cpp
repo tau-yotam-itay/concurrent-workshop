@@ -1,3 +1,4 @@
+#pragma once
 #include "multi_queue.hpp"
 #include "binary_heap.cpp" //remove this and rearrange includes!
 
@@ -35,7 +36,7 @@ public:
         int rand_queue_index;
         do {
             rand_queue_index = rand() % P; // +1 needed?
-			thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+			//thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
         } while (!thrnd_won);
 		BH_Node* to_insert_node = new BH_Node(v);
 		queues_array[rand_queue_index]->insert(to_insert_node);
@@ -58,7 +59,7 @@ public:
 				queues_array[rand_queue_index_2]->get_min()->get_dist() ) {
 				swap(rand_queue_index_1, rand_queue_index_2);
 			}
-			thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+			//thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
 		} while (!thrnd_won);
 		BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
 		tuple<Vertex*, int> ret = make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());

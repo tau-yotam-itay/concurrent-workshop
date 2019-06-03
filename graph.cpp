@@ -5,7 +5,7 @@
 //  Created by Yotam Manne on 18/05/2019.
 //  Copyright © 2019 Yotam Manne. All rights reserved.
 //
-
+#pragma once
 #include "graph.hpp"
 
 using namespace std;
@@ -161,6 +161,10 @@ public:
         }
         return NULL;
     };
+
+	int get_verticies_num() {
+		return number_of_vertices;
+	}
     
     
     void print_graph(){

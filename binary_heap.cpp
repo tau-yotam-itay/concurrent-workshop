@@ -1,3 +1,4 @@
+#pragma once
 #include "binary_heap.hpp"
 #include <limits>
 
