@@ -1,17 +1,16 @@
-#pragma once
 #include <iostream>
-#include "graph.cpp"
-#include "multi_queue.cpp"
-#include "tests.cpp"
-#define RAND_SEED 0
-#define P 2
+#include "graph.h"
+#include "multi_queue.h"
+#include "tests.h"
+#include "constants.h"
+
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     Graph g(argv[1]);
     g.print_graph();
-	heap_sort_test(&g);
-	srand(RAND_SEED);
+    srand(RAND_SEED);
+    heap_sort_test(&g);
     return 0;
 }
 

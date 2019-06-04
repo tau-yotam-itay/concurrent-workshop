@@ -1,9 +1,8 @@
-#pragma once
-#include "sssp.hpp"
-#include "sssp.cpp"
+#include "sssp.h"
+using namespace std;
 
 void thread_worker(Multi_Queue* Q){
-    tuple<Vertex*,int> min = Q->extract_min();
+    std::tuple<Vertex*,int> min = Q->extract_min();
     Vertex* v = get<0>(min);
     int dist = get<1>(min);
     
@@ -20,7 +19,7 @@ void thread_worker(Multi_Queue* Q){
 }
 
 void dijkstra(Vertex*s,Graph*g){
-    Multi_Queue* Q = new Multi_Queue(C_CONST,P);
+    Multi_Queue* Q = new Multi_Queue(C_CONSTANT,P_CONSTANT);
     Q->insert(s);
     //init threads
     while(!Q->is_empty()){
