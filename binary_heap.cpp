@@ -31,7 +31,7 @@ void BH_Node::set_vertex(Vertex* vertex) { v = vertex; }
 void BH_Node::set_dist(int d) { dist = d; }
 bool BH_Node::is_root() { return this->parent == NULL; }
 bool BH_Node::is_right_child() { return !this->is_root() && this->parent->right == this; }
-bool BH_Node::is_left_child() { return !this->is_root() && this->parent->right == this; }
+bool BH_Node::is_left_child() { return !this->is_root() && this->parent->left == this; }
 bool BH_Node::has_right() { return this->right != NULL; }
 bool BH_Node::has_left() { return this->left != NULL; }
 BH_Node* BH_Node::successor()

@@ -5,7 +5,6 @@
 #ifndef CONCURRENT_WORKSHOP_MASTER_SSSP_H
 #define CONCURRENT_WORKSHOP_MASTER_SSSP_H
 
-#include "constants.h"
 #include "graph.h"
 #include "multi_queue.h"
 #include <stdio.h>

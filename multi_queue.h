@@ -3,13 +3,13 @@
 
 #include "binary_heap.h"
 #include "constants.h"
-#include "recordmgr/record_manager.h"
-#include <atomic>  // std::atomic
-#include <iostream>
-#include <mutex>
-#include <sstream>
-#include <string>
-#include <thread>  // std::thread
+//#include "recordmgr/record_manager_single_type.h"
+//#include <atomic>  // std::atomic
+//#include <iostream>
+//#include <mutex>
+//#include <sstream>
+//#include <string>
+//#include <thread>  // std::thread
 #include <tuple>
 
 class Multi_Queue
