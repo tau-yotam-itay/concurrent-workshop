@@ -14,7 +14,6 @@ private:
   BH_Node* right;
 
 public:
-
   BH_Node(Vertex* vertex);
   BH_Node(Vertex* vertex, int distance);
   int get_dist();
@@ -30,7 +29,13 @@ public:
   BH_Node* successor();
   BH_Node* predecessor();
   bool is_leaf();
+  bool is_root();
+  bool is_right_child();
+  bool is_left_child();
+  bool has_right();
+  bool has_left();
   BH_Node* go_leftmost(BH_Node * pNode);
+  BH_Node* go_rightmost(BH_Node * pNode);
 };
 
 

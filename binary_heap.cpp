@@ -49,58 +49,81 @@ void BH_Node::set_vertex(Vertex* vertex) {
 void BH_Node::set_dist(int d) {
   dist = d;
 }
+bool BH_Node::is_root() {
+  return this->parent == NULL;
+}
+bool BH_Node::is_right_child() {
+  return !this->is_root() && this->parent->right == this;
+}
+bool BH_Node::is_left_child() {
+  return !this->is_root() && this->parent->right == this;
+}
+bool BH_Node::has_right() {
+  return this->right != NULL;
+}
+bool BH_Node::has_left() {
+  return this->left != NULL;
+}
 BH_Node* BH_Node::successor(){
   BH_Node* parent = this->get_parent();
   BH_Node* curr_node = this;
 
-  if(!parent){
+  if(!parent){  //single element in heap
     return curr_node;
   }
 
-  while (curr_node->get_parent() != NULL && parent->get_left() != curr_node) {	//go up until  last edge used was a left edge
-          curr_node = parent;
-          parent = parent->get_parent();
+  while (!curr_node->is_root() && curr_node->is_right_child()) {
+    curr_node = parent;
+    parent = parent->get_parent();
   }
-  if(curr_node->get_parent() == NULL){ // parent is root and we went up from right subtree
+  if(curr_node->is_root()){   // parent is root and we went up from right(!) subtree
     return go_leftmost(curr_node);
   }
 
   curr_node = parent;
-  parent = curr_node;
-  curr_node = curr_node->get_right();	//go right
-
-  if(curr_node == NULL){
-    return parent;
+  if(!curr_node->has_right()){
+    return curr_node;
   }
-  return go_leftmost(curr_node);
+  return go_leftmost(curr_node->get_right());
 }
 
 BH_Node* BH_Node::predecessor(){
   BH_Node* parent = this->get_parent();
   BH_Node* curr_node = this;
 
-  while (curr_node->parent != NULL && parent->get_right() != curr_node) {	//go up until last edge used was a right edge
-          curr_node = parent;
-          parent = parent->get_parent();
+  while (!curr_node->is_root() && curr_node->is_left_child()) {
+    curr_node = parent;
+    parent = parent->get_parent();
+  }
+  if(curr_node->is_root()){   // parent is root and we went up from left(!) subtree
+    return go_rightmost(curr_node);
   }
 
-  curr_node = curr_node->get_left();	//go left
-
-  while (true) {	//go right until reach leaf
-          if (curr_node->get_right() != NULL) {
-                  curr_node = curr_node->get_right();
-          }
-          else {
-                  return curr_node;
-          }
+  curr_node = parent;
+  if(!curr_node->has_left()){
+    return curr_node;
   }
+  return go_rightmost(curr_node->get_left());
 }
 bool BH_Node::is_leaf(){
     return (!left && !right);
 }
 BH_Node* BH_Node::go_leftmost(BH_Node *curr_node) {
   while (true) {
-    if (curr_node->get_left() != NULL) {
+    if (curr_node->has_left()) {
+      curr_node = curr_node->get_left();
+    }
+    else {
+      return curr_node;
+    }
+  }
+}
+BH_Node* BH_Node::go_rightmost(BH_Node *curr_node) {
+  while (true) {
+    if (curr_node->has_right()) {
+      curr_node = curr_node->get_right();
+    }
+    else if(curr_node->has_left()){
       curr_node = curr_node->get_left();
     }
     else {
