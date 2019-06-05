@@ -75,7 +75,7 @@ BH_Node* BH_Node::successor(){
     curr_node = parent;
     parent = parent->get_parent();
   }
-  if(curr_node->is_root()){   // parent is root and we went up from right(!) subtree
+  if(curr_node->is_root()){   // curr_node is root and we went up from right(!) subtree
     return go_leftmost(curr_node);
   }
 
@@ -94,7 +94,7 @@ BH_Node* BH_Node::predecessor(){
     curr_node = parent;
     parent = parent->get_parent();
   }
-  if(curr_node->is_root()){   // parent is root and we went up from left(!) subtree
+  if(curr_node->is_root()){   // curr_node is root and we went up from left(!) subtree
     return go_rightmost(curr_node);
   }
 
@@ -121,9 +121,6 @@ BH_Node* BH_Node::go_rightmost(BH_Node *curr_node) {
   while (true) {
     if (curr_node->has_right()) {
       curr_node = curr_node->get_right();
-    }
-    else if(curr_node->has_left()){
-      curr_node = curr_node->get_left();
     }
     else {
       return curr_node;
