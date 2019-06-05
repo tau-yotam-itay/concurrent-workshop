@@ -6,4 +6,4 @@
 
 void heap_sort_test(Graph* g);
 
-#endif // CONCURRENT_WORKSHOP_MASTER_TESTS_H
+#endif  // CONCURRENT_WORKSHOP_MASTER_TESTS_H
