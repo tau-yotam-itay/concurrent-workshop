@@ -208,13 +208,14 @@ BH_Node* Binary_Heap::extract_min(){
   }
   swap(min_node, last_node);
   min = last_node;
+
   last_node = min->predecessor();
 
   // disconnect the node to be removed
   disconnect_node(min);
 
-  this->heapify_down(min_node);
-  // retire min
+  heapify_down(min_node);
+
   return min;
 }
 
