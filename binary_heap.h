@@ -2,8 +2,11 @@
 #define CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
 
 #include <iosfwd>
-#include "graph.h"
 #include <mutex>
+#include <climits>
+#include <limits>
+#include "graph.h"
+
 
 class BH_Node {
 private:

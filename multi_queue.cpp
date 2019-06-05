@@ -14,7 +14,7 @@ Multi_Queue::Multi_Queue(int c, int p) {
     P = p;
     C = c;
     queues_array = new Binary_Heap*[C*P];
-// debra manager = new debra manager...
+//     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
 }
 
 void Multi_Queue::insert(Vertex* v) {
@@ -24,7 +24,7 @@ void Multi_Queue::insert(Vertex* v) {
     int rand_queue_index;
     do {
         rand_queue_index = rand() % P; // +1 needed?
-                    //thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+        thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
     } while (!thrnd_won);
             BH_Node* to_insert_node = new BH_Node(v);
             queues_array[rand_queue_index]->insert(to_insert_node);

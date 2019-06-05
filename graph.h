@@ -5,6 +5,7 @@
 #include <iostream>
 #include <tuple>
 #include <string>
+#include <climits>
 #include <fstream>
 
 class Vertex;

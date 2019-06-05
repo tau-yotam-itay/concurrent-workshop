@@ -10,4 +10,6 @@
 #include "multi_queue.h"
 #include "constants.h"
 
+void dijkstra(Vertex*s,Graph*g);
+
 #endif // CONCURRENT_WORKSHOP_MASTER_SSSP_H

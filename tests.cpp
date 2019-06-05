@@ -1,5 +1,4 @@
 #include "tests.h"
-#include <algorithm>
 using namespace std;
 
 void initialie_dist(Graph* g){

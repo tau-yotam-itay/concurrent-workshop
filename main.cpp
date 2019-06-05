@@ -1,6 +1,6 @@
 #include <iostream>
 #include "graph.h"
-#include "multi_queue.h"
+#include "sssp.h"
 #include "tests.h"
 #include "constants.h"
 
