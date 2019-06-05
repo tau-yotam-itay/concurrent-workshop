@@ -35,22 +35,22 @@ void heap_sort_test(Graph* g) {
 
   //extract min all graph verticies
   i = 0;
-  while (true) {
+  while (heap->get_min() != NULL) {
       curr_heap_node = heap->extract_min();
       heap_sorted_dist_arr[i++] = curr_heap_node->get_dist();
       printf("%d ,",heap_sorted_dist_arr[i-1]);
       fflush(stdout);
 
-      //put in functions
-      if(curr_heap_node->get_parent()==NULL){
-        break;
-      }
-      else if(curr_heap_node->get_parent()->get_left() == curr_heap_node){
-        curr_heap_node->get_parent()->set_left(NULL);
-      }
-      else{
-        curr_heap_node->get_parent()->set_right(NULL);
-      }
+      // //put in functions
+      // if(curr_heap_node->get_parent()==NULL){
+      //   break;
+      // }
+      // else if(curr_heap_node->get_parent()->get_left() == curr_heap_node){
+      //   curr_heap_node->get_parent()->set_left(NULL);
+      // }
+      // else{
+      //   curr_heap_node->get_parent()->set_right(NULL);
+      // }
   }
   printf("\n");
   //printf("sorted distance array is:\n");
