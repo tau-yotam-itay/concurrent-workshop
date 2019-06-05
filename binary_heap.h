@@ -51,6 +51,7 @@ public:
   volatile bool lock;
   Binary_Heap();
   void insert(BH_Node* node);
+  void disconnect_node(BH_Node* node);
   BH_Node* extract_min();
   BH_Node* get_min();
 };

@@ -34,8 +34,8 @@ void heap_sort_test(Graph* g) {
   sort(true_sorted_dist_arr, true_sorted_dist_arr + num_of_verticies);
 
   //extract min all graph verticies
+  i = 0;
   while (true) {
-      i = 0;
       curr_heap_node = heap->extract_min();
       heap_sorted_dist_arr[i++] = curr_heap_node->get_dist();
       printf("%d ,",heap_sorted_dist_arr[i-1]);

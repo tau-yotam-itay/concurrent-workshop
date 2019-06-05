@@ -188,11 +188,32 @@ void Binary_Heap::insert(BH_Node* node) {
   this->heapify_up(node);
 }
 
+void Binary_Heap::disconnect_node(BH_Node* node){
+  if(!node->is_right_child()){
+    node->get_parent()->set_left(NULL);
+  }
+  else if(node->is_right_child()){
+    node->get_parent()->set_right(NULL);
+  }
+  node->set_parent(NULL);
+}
+
 BH_Node* Binary_Heap::extract_min(){
+  BH_Node* min;
+  if(min_node->is_leaf()){ // if only root left in heap
+    min = min_node;
+    min_node = NULL;
+    last_node = NULL;
+    return min;
+  }
   swap(min_node, last_node);
-  BH_Node* min = last_node;
+  min = last_node;
   last_node = min->predecessor();
-  // verify how predecessor works here
+
+  // disconnect the node to be removed
+  disconnect_node(min);
+
+  this->heapify_down(min_node);
   // retire min
   return min;
 }
