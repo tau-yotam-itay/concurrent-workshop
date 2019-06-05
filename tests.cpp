@@ -39,6 +39,7 @@ void heap_sort_test(Graph* g) {
       curr_heap_node = heap->extract_min();
       heap_sorted_dist_arr[i++] = curr_heap_node->get_dist();
       printf("%d ,",heap_sorted_dist_arr[i-1]);
+      fflush(stdout);
 
       //put in functions
       if(curr_heap_node->get_parent()==NULL){
@@ -51,6 +52,7 @@ void heap_sort_test(Graph* g) {
         curr_heap_node->get_parent()->set_right(NULL);
       }
   }
+  printf("\n");
   //printf("sorted distance array is:\n");
   if (i != num_of_verticies + 1) {
       printf("Error: different num of verticies! \n");
