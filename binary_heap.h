@@ -1,22 +1,22 @@
 #ifndef CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
 #define CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
 
-#include <iosfwd>
-#include <mutex>
-#include <climits>
-#include <limits>
 #include "graph.h"
+#include <climits>
+#include <iosfwd>
+#include <limits>
+#include <mutex>
 
-
-class BH_Node {
-private:
+class BH_Node
+{
+ private:
   int dist;
   Vertex* v;
   BH_Node* parent;
   BH_Node* left;
   BH_Node* right;
 
-public:
+ public:
   BH_Node(Vertex* vertex);
   BH_Node(Vertex* vertex, int distance);
   int get_dist();
@@ -37,20 +37,21 @@ public:
   bool is_left_child();
   bool has_right();
   bool has_left();
-  BH_Node* go_leftmost(BH_Node * pNode);
-  BH_Node* go_rightmost(BH_Node * pNode);
+  BH_Node* go_leftmost(BH_Node* pNode);
+  BH_Node* go_rightmost(BH_Node* pNode);
 };
 
-
-class Binary_Heap{
-private:
+class Binary_Heap
+{
+ private:
   BH_Node* min_node;
   BH_Node* last_node;
   // value swap - make sure it doesnt cause external pointers problems
-  void swap(BH_Node* child,BH_Node* parent);
+  void swap(BH_Node* child, BH_Node* parent);
   void heapify_up(BH_Node* node);
   void heapify_down(BH_Node* node);
-public:
+
+ public:
   volatile bool lock;
   Binary_Heap();
   void insert(BH_Node* node);
@@ -59,4 +60,4 @@ public:
   BH_Node* get_min();
 };
 
-#endif // CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
+#endif  // CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H

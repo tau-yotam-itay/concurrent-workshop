@@ -1,35 +1,34 @@
 #ifndef CONCURRENT_WORKSHOP_MASTER_GRAPH_H
 #define CONCURRENT_WORKSHOP_MASTER_GRAPH_H
 
-#include <iosfwd>
-#include <iostream>
-#include <tuple>
-#include <string>
 #include <climits>
 #include <fstream>
+#include <iosfwd>
+#include <iostream>
+#include <string>
+#include <tuple>
 
 class Vertex;
 
-typedef struct neighbor{
+typedef struct neighbor {
   Vertex* v;
   int weight;
   struct neighbor* next;
-}neighbor;
+} neighbor;
 
-
-typedef struct vertex_list_node{
+typedef struct vertex_list_node {
   Vertex* v;
   struct vertex_list_node* next;
-}vertex_list_node;
+} vertex_list_node;
 
-
-class Vertex{
-private:
+class Vertex
+{
+ private:
   int key;
   unsigned int dist;
   neighbor* neighbors;
 
-public:
+ public:
   Vertex(int k);
   int get_key();
   int get_dist();
@@ -40,8 +39,9 @@ public:
   void print_neighbors();
 };
 
-class Graph{
-private:
+class Graph
+{
+ private:
   int number_of_vertices;
   int number_of_edges;
   int source_vertex_key;
@@ -51,7 +51,7 @@ private:
 
   void add_edge(int key1, int key2, int weight);
 
-public:
+ public:
   int count = 0;
 
   Graph(const char* filepath);
@@ -60,5 +60,4 @@ public:
   void print_graph();
 };
 
-
-#endif // CONCURRENT_WORKSHOP_MASTER_GRAPH_H
+#endif  // CONCURRENT_WORKSHOP_MASTER_GRAPH_H
