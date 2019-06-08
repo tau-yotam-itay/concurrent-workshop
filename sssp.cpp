@@ -21,10 +21,31 @@ void thread_worker(Multi_Queue* Q)
 
 void dijkstra(Vertex* s, Graph* g)
 {
+
+/*
+  void* thread(void* arg)
+  {
+    //wait
+    sem_wait(&mutex);
+    printf("\nEntered..\n");
+
+    //critical section
+    sleep(4);
+
+    //signal
+
+    sem_post(&mutex);
+  }
+  */
+
+
   Multi_Queue* Q = new Multi_Queue(C_CONSTANT, P_CONSTANT);
   Q->insert(s);
+  int* threads_status_arr= (int*)calloc(P_CONSTANT, sizeof(int)); //add check failures
+  pthread_t* threads_arr = (pthread_t*)calloc(P_CONSTANT, sizeof(pthread_t)); //add check failures
   // init threads
   while (!Q->is_empty()) {
   }
   // while q not empty - stop main thread from quiting
+  sem_destroy(Q->get_sem_mutex());
 }

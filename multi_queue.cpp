@@ -1,4 +1,6 @@
 #include "multi_queue.h"
+#define THREAD_SHARED 0
+#define SEMAPHORE_INIT_VALUE 1
 
 BH_Node* allocate_node(Vertex* v, int dist) { return NULL; }
 
@@ -10,6 +12,7 @@ Multi_Queue::Multi_Queue(int c, int p)
   P = p;
   C = c;
   queues_array = new Binary_Heap*[C * P];
+  sem_init(&sem_mutex, THREAD_SHARED, SEMAPHORE_INIT_VALUE);
   //     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
 }
 
@@ -53,6 +56,10 @@ std::tuple<Vertex*, int> Multi_Queue::extract_min()
   safe = true;
   // exit debra quiscent state
   return ret;
+}
+
+sem_t* Multi_Queue::get_sem_mutex(){
+  return &sem_mutex;
 }
 
 // need to implement
