@@ -2,10 +2,15 @@
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1
 
-BH_Node* allocate_node(Vertex* v, int dist) { return NULL; }
+BH_Node* allocate_node(Vertex* v, int dist) { 
+  BH_Node* node = new BH_Node(v);
+  return node; 
+  }
 
 // free node using debra
-void Multi_Queue::destroy_node(BH_Node* node) {}
+void Multi_Queue::destroy_node(BH_Node* node) {
+  delete node;
+}
 
 Multi_Queue::Multi_Queue(int c, int p)
 {
@@ -23,7 +28,7 @@ void Multi_Queue::insert(Vertex* v)
   bool thrnd_won;
   int rand_queue_index;
   do {
-    rand_queue_index = rand() % P;                                 // +1 needed?
+    rand_queue_index = rand() % (C*P);                                 // +1 needed?
     thrnd_won = __sync_bool_compare_and_swap(&safe, true, false);  // Compare and swap
   } while (!thrnd_won);
   BH_Node* to_insert_node = new BH_Node(v);
@@ -62,5 +67,12 @@ sem_t* Multi_Queue::get_sem_mutex(){
   return &sem_mutex;
 }
 
-// need to implement
-bool Multi_Queue::is_empty() { return false; }
+// returns true if all binary heaps are empty
+bool Multi_Queue::is_empty() {
+  for(int i=0;i<C*P;i++){
+    if(queues_array[i]->get_min != NULL){
+      return false;
+    }
+  }
+  return true; 
+  }
