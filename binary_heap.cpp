@@ -123,10 +123,10 @@ void Binary_Heap::heapify_up(BH_Node* node)
 
 void Binary_Heap::heapify_down(BH_Node* node)
 {
-  if (node->get_dist() < node->get_left()->get_dist()) {
+  if (node->has_left() && node->get_dist() > node->get_left()->get_dist()) { //changed direction
     swap(node, node->get_left());
     heapify_down(node->get_left());
-  } else if (node->get_dist() < node->get_right()->get_dist()) {
+  } else if (node->has_right() && node->get_dist() > node->get_right()->get_dist()) { //changed direction
     swap(node, node->get_right());
     heapify_down(node->get_right());
   }

@@ -29,9 +29,13 @@ void heap_sort_test(Graph* g)
   for (i = 0; i < num_of_verticies; i++) {
     curr_heap_node = new BH_Node(g->get_vertex(i), num_of_verticies - i);
     heap->insert(curr_heap_node);
+    //printf("%d ,", num_of_verticies - i);
     true_sorted_dist_arr[i] = curr_heap_node->get_dist();
   }
-  sort(true_sorted_dist_arr, true_sorted_dist_arr + num_of_verticies);
+  /*for (int j = 0; j < i; j++) {
+      printf("%d ,", true_sorted_dist_arr[j]);
+  }*/
+  sort(true_sorted_dist_arr, true_sorted_dist_arr + num_of_verticies, greater<int>());
 
   // extract min all graph verticies
   i = 0;
@@ -43,12 +47,13 @@ void heap_sort_test(Graph* g)
   }
   printf("\n");
   // printf("sorted distance array is:\n");
-  if (i != num_of_verticies + 1) {
+  if (i != num_of_verticies) {
     printf("Error: different num of verticies! \n");
     return;
   }
-  for (int j = 0; j < i; j++) {
-    if (heap_sorted_dist_arr[j] != true_sorted_dist_arr[i]) {
+  for (int j = 0; j < num_of_verticies; j++) {
+    if (heap_sorted_dist_arr[j] != true_sorted_dist_arr[j]) {
+      printf("%d ,", true_sorted_dist_arr[j]);
       printf("Error: difference in vertex number: %d \n", j);
     }
     // printf(heap_sorted_dist_arr[j] + ",");
