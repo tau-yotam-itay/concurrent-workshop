@@ -2,6 +2,15 @@
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1
 
+Multi_Queue::Multi_Queue(int c, int p)
+{
+  P = p;
+  C = c;
+  queues_array = new Binary_Heap*[C * P];
+  sem_init(&sem_mutex, THREAD_SHARED, SEMAPHORE_INIT_VALUE);
+  //     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
+  }
+
 BH_Node* allocate_node(Vertex* v, int dist) { 
   BH_Node* node = new BH_Node(v);
   return node; 
@@ -10,15 +19,6 @@ BH_Node* allocate_node(Vertex* v, int dist) {
 // free node using debra
 void Multi_Queue::destroy_node(BH_Node* node) {
   delete node;
-}
-
-Multi_Queue::Multi_Queue(int c, int p)
-{
-  P = p;
-  C = c;
-  queues_array = new Binary_Heap*[C * P];
-  sem_init(&sem_mutex, THREAD_SHARED, SEMAPHORE_INIT_VALUE);
-  //     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
 }
 
 void Multi_Queue::insert(Vertex* v)
@@ -45,11 +45,11 @@ std::tuple<Vertex*, int> Multi_Queue::extract_min()
   int rand_queue_index_1, rand_queue_index_2;
   do {
     do {
-      rand_queue_index_1 = rand() % P;  // +1 needed?
-      rand_queue_index_2 = rand() % P;  // +1 needed?
+      rand_queue_index_1 = rand() % (C*P);  // +1 needed?
+      rand_queue_index_2 = rand() % (C*P);  // +1 needed?
       // make sure they are not the same index
     } while (rand_queue_index_1 == rand_queue_index_2);
-    if (queues_array[rand_queue_index_1]->get_min()->get_dist() >
+    if (queues_array[rand_queue_index_1]->get_min()->get_dist() > // will throw exception if binary heap is empty
         queues_array[rand_queue_index_2]->get_min()->get_dist()) {
       std::swap(rand_queue_index_1, rand_queue_index_2);
     }
@@ -70,9 +70,9 @@ sem_t* Multi_Queue::get_sem_mutex(){
 // returns true if all binary heaps are empty
 bool Multi_Queue::is_empty() {
   for(int i=0;i<C*P;i++){
-    if(queues_array[i]->get_min != NULL){
+    if(queues_array[i]->get_min() != NULL){
       return false;
     }
   }
   return true; 
-  }
+}
