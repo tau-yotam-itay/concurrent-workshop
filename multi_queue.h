@@ -21,11 +21,14 @@ class Multi_Queue
  private:
   int C;
   int P;
-  BH_Node* allocate_node(Vertex* v, int dist);
-  void destroy_node(BH_Node* node);
   sem_t sem_mutex;
   //record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node> * mgr;
+
+  BH_Node* allocate_node(Vertex* v, int dist);
+  void destroy_node(BH_Node* node);
+ 
  public:
+  int finish;
   Binary_Heap** queues_array;
   sem_t* get_sem_mutex();
   Multi_Queue(int c, int p);

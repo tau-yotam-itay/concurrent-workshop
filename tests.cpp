@@ -13,6 +13,13 @@ void initialie_dist(Graph* g)
   }
 }
 
+void print_arr(int*arr,int n){
+  for(int i=0;i<n;i++){
+    printf("%d, ",arr[i]);
+  }
+  fflush(stdout);
+}
+
 void heap_sort_test(Graph* g)
 {
 
@@ -28,21 +35,24 @@ void heap_sort_test(Graph* g)
   // insert all graph verticies
   for (i = 0; i < num_of_verticies; i++) {
     curr_heap_node = new BH_Node(g->get_vertex(i), num_of_verticies - i);
+    true_sorted_dist_arr[i] = curr_heap_node->get_dist();
     heap->insert(curr_heap_node);
     //printf("%d ,", num_of_verticies - i);
-    true_sorted_dist_arr[i] = curr_heap_node->get_dist();
+    
   }
   /*for (int j = 0; j < i; j++) {
       printf("%d ,", true_sorted_dist_arr[j]);
   }*/
-  sort(true_sorted_dist_arr, true_sorted_dist_arr + num_of_verticies, greater<int>());
-
+  sort(true_sorted_dist_arr, true_sorted_dist_arr + num_of_verticies);
+  printf("system sorted arr:\n");
+  print_arr(true_sorted_dist_arr,num_of_verticies);
   // extract min all graph verticies
   i = 0;
+  printf("\nheap sorted arr:\n");
   while (heap->get_min() != NULL) {  // while heap is not empty
     curr_heap_node = heap->extract_min();
     heap_sorted_dist_arr[i++] = curr_heap_node->get_dist();
-    printf("%d ,", heap_sorted_dist_arr[i - 1]);
+    printf("%d, ", heap_sorted_dist_arr[i - 1]);
     fflush(stdout);
   }
   printf("\n");

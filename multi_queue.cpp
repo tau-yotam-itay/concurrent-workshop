@@ -6,6 +6,7 @@ Multi_Queue::Multi_Queue(int c, int p)
 {
   P = p;
   C = c;
+  finish = 0;
   queues_array = new Binary_Heap*[C * P];
   sem_init(&sem_mutex, THREAD_SHARED, SEMAPHORE_INIT_VALUE);
   //     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
