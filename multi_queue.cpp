@@ -28,7 +28,6 @@ void Multi_Queue::destroy_node(BH_Node* node) {
 void Multi_Queue::insert(Vertex* v)
 {
   // enter debra quiscent state
-  volatile bool safe;
   bool thrnd_won;
   int rand_queue_index;
   do {
@@ -67,7 +66,7 @@ std::tuple<Vertex*, int> Multi_Queue::extract_min() // dead lock here - stuck in
 
     thrnd_won = __sync_bool_compare_and_swap(&(queues_array[rand_queue_index_1]->lock), false, true); //Compare and swap
   } while (!thrnd_won);
-  Binary_Heap* b = queues_array[rand_queue_index_1];
+  Binary_Heap* b = queues_array[rand_queue_index_1]; //line for debugging/ delete after
   BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
   std::tuple<Vertex*, int> ret = std::make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());
   destroy_node(extracted_node);
