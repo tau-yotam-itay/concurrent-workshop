@@ -8,18 +8,9 @@ typedef struct thread_args{
 }thread_args;
 
 
-void init_threads(Multi_Queue*Q,int*threads_status_arr, pthread_t*threads_arr){
-  // init threads (maybe move to function)
-  for(int i=0;i<P_CONSTANT;i++){
-    thread_args* args = new thread_args;
-    args->Q = Q;
-    args->thread_idx = i;
-    args->thread_status = threads_status_arr;
-    int ret = pthread_create(&threads_arr[i],NULL,&thread_worker,&args);
-    if(ret){
-      perror("pthread_create");
-      exit(EXIT_FAILURE);
-    }
+void print_distances(Graph*g){
+  for(int i=0;i<g->get_verticies_num();i++){
+    printf("%d\n",g->get_vertex(1)->get_dist());
   }
 }
 
@@ -57,8 +48,17 @@ void* thread_worker(void* args)
   int thread_idx = t_args->thread_idx;
 
   while(!Q->finish){
+    if(is_only_worker(thread_idx,thread_status) && Q->is_empty() && !Q->finish){ // check if time to terminate
+      Q->finish = 1;
+      wake_all_threads(Q->get_sem_mutex());
+      break;
+    }
+    thread_status[thread_idx] = 0;
     sem_wait(Q->get_sem_mutex());
-
+    thread_status[thread_idx] = 1;
+    if(Q->finish){
+      break;
+    }
     std::tuple<Vertex*, int> min = Q->extract_min();
     Vertex* v = get<0>(min);
     int dist = get<1>(min);
@@ -68,15 +68,31 @@ void* thread_worker(void* args)
       relax(Q, dist, n);
       n = n->next;
     }
-    if(is_only_worker(thread_idx,thread_status) && Q->is_empty() && !Q->finish){ // check if time to terminate
-      Q->finish = 1;
-      wake_all_threads(Q->get_sem_mutex());
-      break;
-    }
   }
   thread_status[thread_idx] = 0;
+  free(args);
   return NULL;
 }
+
+void init_threads(Multi_Queue*Q,int*threads_status_arr, pthread_t*threads_arr){
+  // init threads (maybe move to function)
+  for(int i=0;i<P_CONSTANT;i++){
+    thread_args* args = (thread_args*)calloc(1,sizeof(thread_args));
+    if(!args){
+      perror("calloc");
+      exit(EXIT_FAILURE);
+    }
+    args->Q = Q;
+    args->thread_idx = i;
+    args->thread_status = threads_status_arr;
+    int ret = pthread_create(&threads_arr[i],NULL,&thread_worker,args);
+    if(ret){
+      perror("pthread_create");
+      exit(EXIT_FAILURE);
+    }
+  }
+}
+
 
 void dijkstra(Vertex* s, Graph* g)
 {
@@ -89,6 +105,7 @@ void dijkstra(Vertex* s, Graph* g)
   }
 
   Multi_Queue* Q = new Multi_Queue(C_CONSTANT, P_CONSTANT);
+  s->set_dist(0);
   Q->insert(s);
 
   init_threads(Q, threads_status_arr, threads_arr);
@@ -99,4 +116,6 @@ void dijkstra(Vertex* s, Graph* g)
   }
 
   sem_destroy(Q->get_sem_mutex());
+  free(threads_arr);
+  free(threads_status_arr);
 }

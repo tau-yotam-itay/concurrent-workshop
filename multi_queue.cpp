@@ -10,7 +10,10 @@ Multi_Queue::Multi_Queue(int c, int p)
   queues_array = new Binary_Heap*[C * P];
   sem_init(&sem_mutex, THREAD_SHARED, SEMAPHORE_INIT_VALUE);
   //     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
+  for(int i=0;i<C*P;i++){
+    queues_array[i] = new Binary_Heap();
   }
+}
 
 BH_Node* allocate_node(Vertex* v, int dist) { 
   BH_Node* node = new BH_Node(v);
@@ -30,36 +33,45 @@ void Multi_Queue::insert(Vertex* v)
   int rand_queue_index;
   do {
     rand_queue_index = rand() % (C*P);                                 // +1 needed?
-    thrnd_won = __sync_bool_compare_and_swap(&safe, true, false);  // Compare and swap
+    thrnd_won = __sync_bool_compare_and_swap(&(queues_array[rand_queue_index]->lock), false, true);  // Compare and swap
   } while (!thrnd_won);
   BH_Node* to_insert_node = new BH_Node(v);
   queues_array[rand_queue_index]->insert(to_insert_node);
-  safe = true;
+  queues_array[rand_queue_index]->lock = false;
   // exit debra quiscent state
 }
 
-std::tuple<Vertex*, int> Multi_Queue::extract_min()
+std::tuple<Vertex*, int> Multi_Queue::extract_min() // dead lock here - stuck in loop while other thread terminates
 {
   // enter debra quiscent state
   volatile bool safe;
-  bool thrnd_won;
+  bool thrnd_won, both_empty = false;
   int rand_queue_index_1, rand_queue_index_2;
   do {
     do {
       rand_queue_index_1 = rand() % (C*P);  // +1 needed?
       rand_queue_index_2 = rand() % (C*P);  // +1 needed?
       // make sure they are not the same index
-    } while (rand_queue_index_1 == rand_queue_index_2);
-    if (queues_array[rand_queue_index_1]->get_min()->get_dist() > // will throw exception if binary heap is empty
+      both_empty = (queues_array[rand_queue_index_1]->is_empty() && queues_array[rand_queue_index_2]->is_empty());
+    } while (rand_queue_index_1 == rand_queue_index_2 || both_empty);
+
+    bool one_empty = queues_array[rand_queue_index_1]->is_empty() || queues_array[rand_queue_index_2]->is_empty();
+    if (!one_empty && queues_array[rand_queue_index_1]->get_min()->get_dist() > 
         queues_array[rand_queue_index_2]->get_min()->get_dist()) {
       std::swap(rand_queue_index_1, rand_queue_index_2);
     }
-    // thrnd_won = __sync_bool_compare_and_swap(&safe, true, false); //Compare and swap
+    else if(one_empty)
+    {
+      rand_queue_index_1 = (queues_array[rand_queue_index_1]->is_empty()) ? rand_queue_index_2 : rand_queue_index_1;
+    }
+
+    thrnd_won = __sync_bool_compare_and_swap(&(queues_array[rand_queue_index_1]->lock), false, true); //Compare and swap
   } while (!thrnd_won);
+  Binary_Heap* b = queues_array[rand_queue_index_1];
   BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
   std::tuple<Vertex*, int> ret = std::make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());
   destroy_node(extracted_node);
-  safe = true;
+  queues_array[rand_queue_index_1]->lock = false;
   // exit debra quiscent state
   return ret;
 }

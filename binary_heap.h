@@ -58,6 +58,7 @@ class Binary_Heap
   void disconnect_node(BH_Node* node);
   BH_Node* extract_min();
   BH_Node* get_min();
+  bool is_empty();
 };
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H

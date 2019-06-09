@@ -3,7 +3,7 @@
 using namespace std;
 BH_Node::BH_Node(Vertex* vertex)
 {
-  dist = INT_MAX;
+  dist = vertex->get_dist();
   v = vertex;
   parent = NULL;
   left = NULL;
@@ -99,8 +99,6 @@ BH_Node* BH_Node::go_rightmost(BH_Node* curr_node)
   }
 }
 
-BH_Node* min_node;
-BH_Node* last_node;
 
 // value swap - make sure it doesnt cause external pointers problems
 void Binary_Heap::swap(BH_Node* child, BH_Node* parent)
@@ -132,12 +130,12 @@ void Binary_Heap::heapify_down(BH_Node* node)
   }
 }
 
-volatile bool lock;
 
 Binary_Heap::Binary_Heap()
 {
   min_node = NULL;
   last_node = NULL;
+  volatile bool lock = false;
 }
 
 void Binary_Heap::insert(BH_Node* node)
@@ -191,3 +189,5 @@ BH_Node* Binary_Heap::extract_min()
 }
 
 BH_Node* Binary_Heap::get_min() { return min_node; }
+
+bool Binary_Heap::is_empty(){ return min_node==NULL; }
