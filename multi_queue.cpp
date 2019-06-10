@@ -1,6 +1,7 @@
 #include "multi_queue.h"
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1
+#include "recordmgr/record_manager.h"
 
 Multi_Queue::Multi_Queue(int c, int p)
 {
@@ -9,7 +10,7 @@ Multi_Queue::Multi_Queue(int c, int p)
   finish = 0;
   queues_array = new Binary_Heap*[C * P];
   sem_init(&sem_mutex, THREAD_SHARED, SEMAPHORE_INIT_VALUE);
-  //     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
+  // mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
   for(int i=0;i<C*P;i++){
     queues_array[i] = new Binary_Heap();
   }

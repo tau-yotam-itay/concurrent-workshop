@@ -7,7 +7,6 @@
 #include <semaphore.h>
 //#include <sys/sem.h>
 #include <unistd.h>
-//#include "recordmgr/record_manager.h"
 //#include <atomic>  // std::atomic
 //#include <iostream>
 //#include <mutex>
@@ -22,7 +21,7 @@ class Multi_Queue
   int C;
   int P;
   sem_t sem_mutex;
-  //record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node> * mgr;
+  // record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node> * mgr;
 
   BH_Node* allocate_node(Vertex* v, int dist);
   void destroy_node(BH_Node* node);
