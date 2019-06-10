@@ -56,6 +56,7 @@ class Graph
 
   Graph(const char* filepath);
   Vertex* get_vertex(int key);
+  Vertex* get_source();
   int get_verticies_num();
   void print_graph();
 };

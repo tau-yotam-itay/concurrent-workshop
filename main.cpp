@@ -8,8 +8,8 @@ int main(int argc, const char* argv[])
   g.print_graph();
   srand(RAND_SEED);
   //heap_sort_test(&g);
-  Vertex* v = g.get_vertex(0);
-  dijkstra(v,&g);
+  Vertex* s = g.get_source();
+  dijkstra(s,&g);
   print_distances(&g);
   return 0;
 }
