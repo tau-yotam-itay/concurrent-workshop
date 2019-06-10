@@ -7,6 +7,6 @@
 
 #define RAND_SEED 0
 #define C_CONSTANT 2
-#define P_CONSTANT 2
+#define P_CONSTANT 10
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_CONSTANTS_H

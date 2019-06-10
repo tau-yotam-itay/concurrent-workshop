@@ -10,7 +10,7 @@ typedef struct thread_args{
 
 void print_distances(Graph*g){
   for(int i=0;i<g->get_verticies_num();i++){
-    printf("%d\n",g->get_vertex(1)->get_dist());
+    printf("%d\n",g->get_vertex(i)->get_dist());
   }
 }
 
