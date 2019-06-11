@@ -1,35 +1,42 @@
 #include "sssp.h"
 using namespace std;
 
-typedef struct thread_args{
+typedef struct thread_args {
   Multi_Queue* Q;
   int* thread_status;
   int thread_idx;
-}thread_args;
+} thread_args;
 
-
-void print_distances(Graph*g){
-  for(int i=0;i<g->get_verticies_num();i++){
-    printf("%d\n",g->get_vertex(i)->get_dist());
+void print_distances(Graph* g)
+{
+  for (int i = 0; i < g->get_verticies_num(); i++) {
+    printf("%d\n", g->get_vertex(i)->get_dist());
   }
 }
 
-bool is_only_worker(int thread_idx, int*threads_status){
-  for(int i=0; i<P_CONSTANT; i++){
-    if(i != thread_idx && threads_status[i] == 1){
+bool is_only_worker(int thread_idx, int* threads_status, Multi_Queue* Q)
+{
+  bool locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
+  if(!locked){return false;}
+  for (int i = 0; i < P_CONSTANT; i++) {
+    if (i != thread_idx && threads_status[i] == 1) {
+      Q->set_all_sleep_lock(false);
       return false;
     }
   }
+  Q->set_all_sleep_lock(false);
   return true;
 }
 
-void wake_all_threads(sem_t* sem){
-  for(int i=0; i<P_CONSTANT; i++){
+void wake_all_threads(sem_t* sem)
+{
+  for (int i = 0; i < P_CONSTANT; i++) {
     sem_post(sem);
   }
 }
 
-void relax(Multi_Queue*Q, int dist, neighbor*n){
+void relax(Multi_Queue* Q, int dist, neighbor* n)
+{
   int new_dist = dist + n->weight;    // d' = d(n) + w(v,n)
   if (new_dist < n->v->get_dist()) {  // if distance is smaller - relax and add to Q
     n->v->set_dist(new_dist);
@@ -42,13 +49,13 @@ void relax(Multi_Queue*Q, int dist, neighbor*n){
 void* thread_worker(void* args)
 {
 
-  thread_args* t_args = (thread_args*) args;
+  thread_args* t_args = (thread_args*)args;
   Multi_Queue* Q = t_args->Q;
   int* thread_status = t_args->thread_status;
   int thread_idx = t_args->thread_idx;
 
-  while(!Q->finish){
-    if(is_only_worker(thread_idx,thread_status) && Q->is_empty() && !Q->finish){ // check if time to terminate
+  while (!Q->finish) {
+    if (is_only_worker(thread_idx, thread_status, Q) && Q->is_empty() && !Q->finish) {  // check if time to terminate
       Q->finish = 1;
       wake_all_threads(Q->get_sem_mutex());
       break;
@@ -56,7 +63,7 @@ void* thread_worker(void* args)
     thread_status[thread_idx] = 0;
     sem_wait(Q->get_sem_mutex());
     thread_status[thread_idx] = 1;
-    if(Q->finish){
+    if (Q->finish) {
       break;
     }
     std::tuple<Vertex*, int> min = Q->extract_min();
@@ -64,7 +71,7 @@ void* thread_worker(void* args)
     int dist = get<1>(min);
 
     neighbor* n = v->get_neighbors();
-    while (n != NULL) { // iterate all neighbors of v
+    while (n != NULL) {  // iterate all neighbors of v
       relax(Q, dist, n);
       n = n->next;
     }
@@ -74,32 +81,32 @@ void* thread_worker(void* args)
   return NULL;
 }
 
-void init_threads(Multi_Queue*Q,int*threads_status_arr, pthread_t*threads_arr){
+void init_threads(Multi_Queue* Q, int* threads_status_arr, pthread_t* threads_arr)
+{
   // init threads (maybe move to function)
-  for(int i=0;i<P_CONSTANT;i++){
-    thread_args* args = (thread_args*)calloc(1,sizeof(thread_args));
-    if(!args){
+  for (int i = 0; i < P_CONSTANT; i++) {
+    thread_args* args = (thread_args*)calloc(1, sizeof(thread_args));
+    if (!args) {
       perror("calloc");
       exit(EXIT_FAILURE);
     }
     args->Q = Q;
     args->thread_idx = i;
     args->thread_status = threads_status_arr;
-    int ret = pthread_create(&threads_arr[i],NULL,&thread_worker,args);
-    if(ret){
+    int ret = pthread_create(&threads_arr[i], NULL, &thread_worker, args);
+    if (ret) {
       perror("pthread_create");
       exit(EXIT_FAILURE);
     }
   }
 }
 
-
 void dijkstra(Vertex* s, Graph* g)
 {
 
-  int* threads_status_arr =       (int*)calloc(P_CONSTANT, sizeof(int));
-  pthread_t* threads_arr  = (pthread_t*)calloc(P_CONSTANT, sizeof(pthread_t));
-  if(threads_arr == NULL || threads_status_arr == NULL){
+  int* threads_status_arr = (int*)calloc(P_CONSTANT, sizeof(int));
+  pthread_t* threads_arr = (pthread_t*)calloc(P_CONSTANT, sizeof(pthread_t));
+  if (threads_arr == NULL || threads_status_arr == NULL) {
     perror("malloc");
     exit(EXIT_FAILURE);
   }
@@ -110,9 +117,9 @@ void dijkstra(Vertex* s, Graph* g)
 
   init_threads(Q, threads_status_arr, threads_arr);
 
-  //pthread join - wait for everyone to finish
-  for(int i=0; i<P_CONSTANT; i++){
-    pthread_join(threads_arr[i],NULL);
+  // pthread join - wait for everyone to finish
+  for (int i = 0; i < P_CONSTANT; i++) {
+    pthread_join(threads_arr[i], NULL);
   }
 
   sem_destroy(Q->get_sem_mutex());

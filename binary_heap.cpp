@@ -99,7 +99,6 @@ BH_Node* BH_Node::go_rightmost(BH_Node* curr_node)
   }
 }
 
-
 // value swap - make sure it doesnt cause external pointers problems
 void Binary_Heap::swap(BH_Node* child, BH_Node* parent)
 {
@@ -119,17 +118,23 @@ void Binary_Heap::heapify_up(BH_Node* node)
   }
 }
 
+volatile bool* Binary_Heap::get_lock() { return &lock; }
+
+void Binary_Heap::set_lock(bool b)
+{
+  lock = b;
+}
+
 void Binary_Heap::heapify_down(BH_Node* node)
 {
-  if (node->has_left() && node->get_dist() > node->get_left()->get_dist()) { //changed direction
+  if (node->has_left() && node->get_dist() > node->get_left()->get_dist()) {  // changed direction
     swap(node, node->get_left());
     heapify_down(node->get_left());
-  } else if (node->has_right() && node->get_dist() > node->get_right()->get_dist()) { //changed direction
+  } else if (node->has_right() && node->get_dist() > node->get_right()->get_dist()) {  // changed direction
     swap(node, node->get_right());
     heapify_down(node->get_right());
   }
 }
-
 
 Binary_Heap::Binary_Heap()
 {
@@ -190,4 +195,4 @@ BH_Node* Binary_Heap::extract_min()
 
 BH_Node* Binary_Heap::get_min() { return min_node; }
 
-bool Binary_Heap::is_empty(){ return min_node==NULL; }
+bool Binary_Heap::is_empty() { return min_node == NULL; }

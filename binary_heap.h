@@ -2,9 +2,9 @@
 #define CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
 
 #include "graph.h"
-#include <climits>
+//#include <climits>
 //#include <iosfwd>
-#include <limits>
+//#include <limits>
 //#include <mutex>
 
 class BH_Node
@@ -50,15 +50,17 @@ class Binary_Heap
   void swap(BH_Node* child, BH_Node* parent);
   void heapify_up(BH_Node* node);
   void heapify_down(BH_Node* node);
+  volatile bool lock;
 
  public:
-  volatile bool lock;
   Binary_Heap();
   void insert(BH_Node* node);
   void disconnect_node(BH_Node* node);
   BH_Node* extract_min();
   BH_Node* get_min();
   bool is_empty();
+  volatile bool* get_lock();
+  void set_lock(bool b);
 };
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H

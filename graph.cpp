@@ -96,10 +96,7 @@ Vertex* Graph::get_vertex(int key)
   return NULL;
 }
 
-Vertex* Graph::get_source()
-{
-  return get_vertex(this->source_vertex_key);
-}
+Vertex* Graph::get_source() { return get_vertex(this->source_vertex_key); }
 
 int Graph::get_verticies_num() { return number_of_vertices; }
 

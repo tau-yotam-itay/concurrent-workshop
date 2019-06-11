@@ -3,17 +3,17 @@
 
 #include "binary_heap.h"
 #include "constants.h"
-#include <pthread.h>
 #include <semaphore.h>
+//#include <pthread.h>
 //#include <sys/sem.h>
-#include <unistd.h>
+//#include <unistd.h>
 //#include <atomic>  // std::atomic
 //#include <iostream>
 //#include <mutex>
 //#include <sstream>
 //#include <string>
 //#include <thread>  // std::thread
-#include <tuple>
+//#include <tuple>
 
 class Multi_Queue
 {
@@ -21,11 +21,12 @@ class Multi_Queue
   int C;
   int P;
   sem_t sem_mutex;
+  volatile bool all_sleep_lock;
   // record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node> * mgr;
 
   BH_Node* allocate_node(Vertex* v, int dist);
   void destroy_node(BH_Node* node);
- 
+
  public:
   int finish;
   Binary_Heap** queues_array;
@@ -33,7 +34,8 @@ class Multi_Queue
   Multi_Queue(int c, int p);
   void insert(Vertex* v);
   std::tuple<Vertex*, int> extract_min();
-  // need to implement
+  volatile bool* get_all_sleep_lock();
+  void set_all_sleep_lock(bool b);
   bool is_empty();
 };
 
