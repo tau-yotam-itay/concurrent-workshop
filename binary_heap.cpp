@@ -104,18 +104,33 @@ void Binary_Heap::swap(BH_Node* child, BH_Node* parent)
 {
   int c_dist = child->get_dist();
   Vertex* c_vertex = child->get_vertex();
+  BH_Node* c_parent = child->get_parent();
+  BH_Node* c_left = child->get_left();
+  BH_Node* c_right = child->get_right();
+
   child->set_dist(parent->get_dist());
   child->set_vertex(parent->get_vertex());
+  child->set_parent(parent->get_parent());
+  child->set_left(parent->get_left());
+  child->set_right(parent->get_right());
+
   parent->set_dist(c_dist);
   parent->set_vertex(c_vertex);
+  parent->set_parent(c_parent);
+  parent->set_left(c_left);
+  parent->set_right(c_right);
 }
 
 void Binary_Heap::heapify_up(BH_Node* node)
 {
-  while (node != min_node && node->get_dist() < node->get_parent()->get_dist()) {
+  BH_Node* parent_ptr;
+  //while (node != min_node && (node->get_dist() < node->get_parent()->get_dist() )) {
+  while ( !node->is_root() && (node->get_dist() < node->get_parent()->get_dist() )) {
+    parent_ptr = node->get_parent();
     swap(node, node->get_parent());
-    node = node->get_parent();
+    node = parent_ptr;
   }
+  if(node->is_root()){ min_node = node;}
 }
 
 volatile bool* Binary_Heap::get_lock() { return &lock; }
@@ -129,17 +144,17 @@ void Binary_Heap::choose_swap(BH_Node* parent, BH_Node** chosen_node){
   if (parent->has_left() && parent->has_right()){ 
     BH_Node* left = parent->get_left();
     BH_Node* right = parent->get_right();
-    if(left->get_dist() < right->get_dist() && parent->get_dist() > left->get_dist()){
+    if( (left->get_dist() < right->get_dist() ) && (parent->get_dist() > left->get_dist() )){
       *chosen_node = left;
     }
-    else if(right->get_dist() < left->get_dist() && parent->get_dist() > right->get_dist()){
+    else if( (right->get_dist() < left->get_dist() ) && ( parent->get_dist() > right->get_dist() )){
       *chosen_node = right;
     }
   }
-  else if (parent->has_left() && parent->get_dist() > parent->get_left()->get_dist()) { 
+  else if (parent->has_left() && (parent->get_dist() > parent->get_left()->get_dist() )) {
     *chosen_node = parent->get_left();
   }
-  else if (parent->has_right() && parent->get_dist() > parent->get_right()->get_dist()) { 
+  else if (parent->has_right() && (parent->get_dist() > parent->get_right()->get_dist() )) {
     *chosen_node = parent->get_right();
   }
 }
@@ -151,7 +166,10 @@ void Binary_Heap::heapify_down(BH_Node* node)
   if(chosen_node){
     swap(node, chosen_node);
     heapify_down(chosen_node);
+    if(node->is_root()){
+      min_node = chosen_node;
     }
+  }
 }
 
 Binary_Heap::Binary_Heap()
@@ -181,6 +199,10 @@ void Binary_Heap::insert(BH_Node* node)
 
 void Binary_Heap::disconnect_node(BH_Node* node)
 {
+  if(node->is_root()){
+    return;
+  }
+
   if (!node->is_right_child()) {
     node->get_parent()->set_left(NULL);
   } else if (node->is_right_child()) {

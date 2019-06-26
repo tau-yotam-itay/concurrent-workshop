@@ -92,6 +92,7 @@ Graph::Graph(const char* filepath)
     add_edge(key1, key2, weight);
     c++;
     if(c%PRINT_INTERVAL_GRAPH == 0){
+
       printf("added %d edges to the graph. \n",c);
     }
   }
