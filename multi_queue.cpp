@@ -43,34 +43,20 @@ void Multi_Queue::insert(Vertex* v)
 std::tuple<Vertex*, int> Multi_Queue::extract_min()  // dead lock here - stuck in loop while other thread terminates
 {
   // enter debra quiscent state
-  volatile bool safe;
-  bool thrnd_won, both_empty = false;
-  int rand_queue_index_1, rand_queue_index_2;
+  Binary_Heap *bh1 = NULL, *bh2 = NULL, *chosen_heap = NULL;
+
   do {
-    do {
-      rand_queue_index_1 = rand() % (C * P);  // +1 needed?
-      rand_queue_index_2 = rand() % (C * P);  // +1 needed?
-      // make sure they are not the same index
-      both_empty = (queues_array[rand_queue_index_1]->is_empty() && queues_array[rand_queue_index_2]->is_empty());
-    } while (rand_queue_index_1 == rand_queue_index_2 || both_empty);
-
-    bool one_empty = queues_array[rand_queue_index_1]->is_empty() || queues_array[rand_queue_index_2]->is_empty();
-    if (one_empty) {
-      rand_queue_index_1 = (queues_array[rand_queue_index_1]->is_empty()) ? rand_queue_index_2 : rand_queue_index_1;
+    choose_random_heap(&bh1, &bh2);
+    if(!try_lock_heaps(bh1, bh2)){
+      continue;
     }
-    else if (!one_empty && queues_array[rand_queue_index_1]->get_min()->get_dist() >
-                          queues_array[rand_queue_index_2]->get_min()->get_dist()) {
-      std::swap(rand_queue_index_1, rand_queue_index_2);
+    choose_one_heap(bh1,bh2,&chosen_heap);
+  } while (!chosen_heap);
 
-    thrnd_won =
-        __sync_bool_compare_and_swap(queues_array[rand_queue_index_1]->get_lock(), false, true);
-  } while (!thrnd_won);
-  
-  Binary_Heap* b = queues_array[rand_queue_index_1];  // line for debugging/ delete after
-  BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
+  BH_Node* extracted_node = chosen_heap->extract_min();
   std::tuple<Vertex*, int> ret = std::make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());
   destroy_node(extracted_node);
-  queues_array[rand_queue_index_1]->set_lock(false);
+  chosen_heap->set_lock(false);
   // exit debra quiscent state
   return ret;
 }
@@ -93,4 +79,58 @@ volatile bool* Multi_Queue::get_all_sleep_lock() { return &all_sleep_lock; }
 void Multi_Queue::set_all_sleep_lock(bool b)
 {
   all_sleep_lock = b;
+}
+
+void Multi_Queue::choose_random_heap(Binary_Heap **bh1, Binary_Heap **bh2) {
+  int rand_queue_index_1, rand_queue_index_2;
+
+  do{
+    rand_queue_index_1 = rand() % (C * P);  // +1 needed?
+    rand_queue_index_2 = rand() % (C * P);  // +1 needed?
+
+  }while(rand_queue_index_1 == rand_queue_index_2);
+
+  *bh1 = queues_array[rand_queue_index_1];
+  *bh2 = queues_array[rand_queue_index_2];
+}
+bool Multi_Queue::try_lock_heaps(Binary_Heap* bh1, Binary_Heap* bh2) {
+  bool lock_queue1 = false, lock_queue2 = false;
+
+  lock_queue1 = __sync_bool_compare_and_swap(bh1->get_lock(), false, true);
+  lock_queue2 = __sync_bool_compare_and_swap(bh2->get_lock(), false, true);
+  if(!(lock_queue1 && lock_queue2)) {
+    lock_queue1 = false;
+    lock_queue2 = false;
+    return false;
+  }
+  return true;
+}
+
+void Multi_Queue::choose_one_heap(Binary_Heap* bh1, Binary_Heap* bh2, Binary_Heap** chosen_heap){
+  bool both_empty;
+
+  both_empty = (bh1->is_empty() && bh2->is_empty());
+  if(both_empty){
+    // skip all other statments
+  }
+  else if(bh1->is_empty()){
+    *chosen_heap = bh2;
+  }
+  else if(bh2->is_empty()){
+    *chosen_heap = bh1;
+  }
+  else if(bh1->get_min()->get_dist() > bh2->get_min()->get_dist()){
+    *chosen_heap = bh2;
+  }
+  else{
+    *chosen_heap = bh1;
+  }
+
+  //release unchosen heap locks
+  if(*chosen_heap != bh1){
+    bh1->set_lock(false);
+  }
+  if(*chosen_heap != bh2){
+    bh2->set_lock(false);
+  }
 }

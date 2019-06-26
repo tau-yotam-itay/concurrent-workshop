@@ -26,6 +26,9 @@ class Multi_Queue
 
   BH_Node* allocate_node(Vertex* v, int dist);
   void destroy_node(BH_Node* node);
+  void choose_random_heap(Binary_Heap** bh1, Binary_Heap** bh2);
+  bool try_lock_heaps(Binary_Heap* bh1, Binary_Heap* bh2);
+  void choose_one_heap(Binary_Heap* bh1, Binary_Heap* bh2, Binary_Heap** chosen_heap);
 
  public:
   int finish;
