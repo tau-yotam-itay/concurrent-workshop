@@ -1,4 +1,5 @@
 #include "sssp.h"
+#define PRINT_INTERVAL 1000
 using namespace std;
 
 typedef struct thread_args {
@@ -41,11 +42,16 @@ void wake_all_threads(sem_t* sem)
   }
 }
 
-void relax(Multi_Queue* Q, int dist, neighbor* n)
+void relax(Multi_Queue* Q, int dist, neighbor* n, int*relax_count, int tidx)
 {
   int new_dist = dist + n->weight;    // d' = d(n) + w(v,n)
   if (new_dist < n->v->get_dist()) {  // if distance is smaller - relax and add to Q
     n->v->set_dist(new_dist);
+    // print progress of thread
+    *relax_count = *relax_count + 1;
+    if (*relax_count%PRINT_INTERVAL == 0){
+      printf("thread %d: relax operations done: %d\n",tidx,*relax_count);
+    }
     Q->insert(n->v);
     sem_post(Q->get_sem_mutex());
   }
@@ -59,6 +65,7 @@ void* thread_worker(void* args)
   Multi_Queue* Q = t_args->Q;
   int* thread_status = t_args->thread_status;
   int thread_idx = t_args->thread_idx;
+  int relax_count = 0;
 
   while (!Q->finish) {
     if (is_only_worker(thread_idx, thread_status, Q) && Q->is_empty() && !Q->finish) {  // check if time to terminate
@@ -78,7 +85,7 @@ void* thread_worker(void* args)
 
     neighbor* n = v->get_neighbors();
     while (n != NULL) {  // iterate all neighbors of v
-      relax(Q, dist, n);
+      relax(Q, dist, n, &relax_count, thread_idx);
       n = n->next;
     }
   }

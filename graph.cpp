@@ -1,4 +1,5 @@
 #include "graph.h"
+#define PRINT_INTERVAL_GRAPH 50000
 
 using namespace std;
 
@@ -75,12 +76,17 @@ void Graph::add_edge(int key1, int key2, int weight)
 
 Graph::Graph(const char* filepath)
 {
+  int c = 0;
   vertex_list = NULL;
   ifstream fp(filepath);
   fp >> number_of_vertices >> number_of_edges >> source_vertex_key;
   int key1, key2, weight;
   while (fp >> key1 >> key2 >> weight) {
     add_edge(key1, key2, weight);
+    c++;
+    if(c%PRINT_INTERVAL_GRAPH == 0){
+      printf("added %d edges to the graph. \n",c);
+    }
   }
 }
 
