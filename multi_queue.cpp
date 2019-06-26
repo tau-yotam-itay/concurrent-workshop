@@ -94,13 +94,13 @@ void Multi_Queue::choose_random_heap(Binary_Heap **bh1, Binary_Heap **bh2) {
   *bh2 = queues_array[rand_queue_index_2];
 }
 bool Multi_Queue::try_lock_heaps(Binary_Heap* bh1, Binary_Heap* bh2) {
-  bool lock_queue1 = false, lock_queue2 = false;
+  bool is_locked_queue1 = false, is_locked_queue2 = false;
 
-  lock_queue1 = __sync_bool_compare_and_swap(bh1->get_lock(), false, true);
-  lock_queue2 = __sync_bool_compare_and_swap(bh2->get_lock(), false, true);
-  if(!(lock_queue1 && lock_queue2)) {
-    lock_queue1 = false;
-    lock_queue2 = false;
+  is_locked_queue1 = __sync_bool_compare_and_swap(bh1->get_lock(), false, true);
+  is_locked_queue2 = __sync_bool_compare_and_swap(bh2->get_lock(), false, true);
+  if(!(is_locked_queue1 && is_locked_queue2)) {
+    bh2->set_lock(false);
+    bh2->set_lock(false);
     return false;
   }
   return true;
