@@ -55,16 +55,17 @@ std::tuple<Vertex*, int> Multi_Queue::extract_min()  // dead lock here - stuck i
     } while (rand_queue_index_1 == rand_queue_index_2 || both_empty);
 
     bool one_empty = queues_array[rand_queue_index_1]->is_empty() || queues_array[rand_queue_index_2]->is_empty();
-    if (!one_empty && queues_array[rand_queue_index_1]->get_min()->get_dist() >
-                          queues_array[rand_queue_index_2]->get_min()->get_dist()) {
-      std::swap(rand_queue_index_1, rand_queue_index_2);
-    } else if (one_empty) {
+    if (one_empty) {
       rand_queue_index_1 = (queues_array[rand_queue_index_1]->is_empty()) ? rand_queue_index_2 : rand_queue_index_1;
     }
+    else if (!one_empty && queues_array[rand_queue_index_1]->get_min()->get_dist() >
+                          queues_array[rand_queue_index_2]->get_min()->get_dist()) {
+      std::swap(rand_queue_index_1, rand_queue_index_2);
 
     thrnd_won =
         __sync_bool_compare_and_swap(queues_array[rand_queue_index_1]->get_lock(), false, true);
   } while (!thrnd_won);
+  
   Binary_Heap* b = queues_array[rand_queue_index_1];  // line for debugging/ delete after
   BH_Node* extracted_node = queues_array[rand_queue_index_1]->extract_min();
   std::tuple<Vertex*, int> ret = std::make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());
