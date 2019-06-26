@@ -1,16 +1,64 @@
 #include "tests.h"
 using namespace std;
 
-void initialie_dist(Graph* g)
+struct Trunk
 {
+    Trunk *prev;
+    string str;
 
-  int num_of_verticies = g->get_verticies_num();
-  int i;
+    Trunk(Trunk *prev, string str)
+    {
+        this->prev = prev;
+        this->str = str;
+    }
+};
 
-  // insert all graph verticies
-  for (i = 0; i < num_of_verticies; i++) {
-    g->get_vertex(i)->set_dist(num_of_verticies - i);  // set distances in reversed order
-  }
+// Helper function to print branches of the binary tree
+void showTrunks(Trunk *p)
+{
+    if (p == nullptr)
+        return;
+
+    showTrunks(p->prev);
+
+    // cout << p->str;
+    printf("%s",(p->str).c_str());
+}
+
+// Recursive function to print binary tree
+// It uses inorder traversal
+void printTree(BH_Node *root, Trunk *prev, bool isLeft)
+{
+    if (root == nullptr)
+        return;
+    
+    string prev_str = "    ";
+    Trunk *trunk = new Trunk(prev, prev_str);
+
+    printTree(root->get_left(), trunk, true);
+
+    if (!prev)
+        trunk->str = "---";
+    else if (isLeft)
+    {
+        trunk->str = ".---";
+        prev_str = "   |";
+    }
+    else
+    {
+        trunk->str = "'---";
+        prev->str = prev_str;
+    }
+
+    showTrunks(trunk);
+    // cout << root->get_dist() << endl;
+    printf("%d\n",root->get_dist());
+
+    if (prev)
+        prev->str = prev_str;
+    trunk->str = "   |";
+
+    printTree(root->get_right(), trunk, false);
 }
 
 void print_arr(int* arr, int n)
@@ -21,21 +69,21 @@ void print_arr(int* arr, int n)
   fflush(stdout);
 }
 
-void heap_sort_test(Graph* g)
+void heap_sort_test(int num_of_verticies)
 {
 
   // initialie_dist(g);
 
   Binary_Heap* heap = new Binary_Heap();
   BH_Node* curr_heap_node;
-  int num_of_verticies = g->get_verticies_num();
   int* heap_sorted_dist_arr = (int*)calloc(num_of_verticies, sizeof(int));
   int* true_sorted_dist_arr = (int*)calloc(num_of_verticies, sizeof(int));
   int i;
 
   // insert all graph verticies
   for (i = 0; i < num_of_verticies; i++) {
-    curr_heap_node = new BH_Node(g->get_vertex(i), num_of_verticies - i);
+    Vertex* v = new Vertex(i,num_of_verticies - i);
+    curr_heap_node = new BH_Node(v);
     true_sorted_dist_arr[i] = curr_heap_node->get_dist();
     heap->insert(curr_heap_node);
     // printf("%d ,", num_of_verticies - i);
@@ -44,9 +92,10 @@ void heap_sort_test(Graph* g)
       printf("%d ,", true_sorted_dist_arr[j]);
   }*/
   sort(true_sorted_dist_arr, true_sorted_dist_arr + num_of_verticies);
-  printf("system sorted arr:\n");
-  print_arr(true_sorted_dist_arr, num_of_verticies);
+  // printf("system sorted arr:\n");
+  // print_arr(true_sorted_dist_arr, num_of_verticies);
   // extract min all graph verticies
+  printTree(heap->get_min(),NULL,false);
   i = 0;
   printf("\nheap sorted arr:\n");
   while (heap->get_min() != NULL) {  // while heap is not empty
@@ -54,6 +103,7 @@ void heap_sort_test(Graph* g)
     heap_sorted_dist_arr[i++] = curr_heap_node->get_dist();
     printf("%d, ", heap_sorted_dist_arr[i - 1]);
     fflush(stdout);
+    printTree(heap->get_min(),NULL,false);
   }
   printf("\n");
   // printf("sorted distance array is:\n");

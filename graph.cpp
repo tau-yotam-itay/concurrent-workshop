@@ -10,6 +10,13 @@ Vertex::Vertex(int k)
   dist = INT_MAX;
 }
 
+Vertex::Vertex(int k, int new_dist)
+{
+  key = k;
+  neighbors = NULL;
+  dist = new_dist;
+}
+
 int Vertex::get_key() { return key; }
 
 int Vertex::get_dist() { return dist; }

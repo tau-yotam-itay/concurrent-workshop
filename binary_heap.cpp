@@ -125,15 +125,33 @@ void Binary_Heap::set_lock(bool b)
   lock = b;
 }
 
+void Binary_Heap::choose_swap(BH_Node* parent, BH_Node** chosen_node){
+  if (parent->has_left() && parent->has_right()){ 
+    BH_Node* left = parent->get_left();
+    BH_Node* right = parent->get_right();
+    if(left->get_dist() < right->get_dist() && parent->get_dist() > left->get_dist()){
+      *chosen_node = left;
+    }
+    else if(right->get_dist() < left->get_dist() && parent->get_dist() > right->get_dist()){
+      *chosen_node = right;
+    }
+  }
+  else if (parent->has_left() && parent->get_dist() > parent->get_left()->get_dist()) { 
+    *chosen_node = parent->get_left();
+  }
+  else if (parent->has_right() && parent->get_dist() > parent->get_right()->get_dist()) { 
+    *chosen_node = parent->get_right();
+  }
+}
+
 void Binary_Heap::heapify_down(BH_Node* node)
 {
-  if (node->has_left() && node->get_dist() > node->get_left()->get_dist()) {  // changed direction
-    swap(node, node->get_left());
-    heapify_down(node->get_left());
-  } else if (node->has_right() && node->get_dist() > node->get_right()->get_dist()) {  // changed direction
-    swap(node, node->get_right());
-    heapify_down(node->get_right());
-  }
+  BH_Node* chosen_node = NULL;
+  choose_swap(node,&chosen_node);
+  if(chosen_node){
+    swap(node, chosen_node);
+    heapify_down(chosen_node);
+    }
 }
 
 Binary_Heap::Binary_Heap()
@@ -182,7 +200,9 @@ BH_Node* Binary_Heap::extract_min()
   }
   swap(min_node, last_node);
   min = last_node;
-
+  if(min->get_dist()<0){
+    printf("d\n");
+  }
   last_node = min->predecessor();
 
   // disconnect the node to be removed

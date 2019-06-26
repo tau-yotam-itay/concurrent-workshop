@@ -30,6 +30,7 @@ class Vertex
 
  public:
   Vertex(int k);
+  Vertex(int k, int dist);
   int get_key();
   int get_dist();
   void set_dist(int d);
