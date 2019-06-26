@@ -5,7 +5,8 @@
 int main(int argc, const char* argv[])
 {
   Graph g(argv[1]);
-  g.print_graph();
+  printf("done building graph. \n");
+  // g.print_graph();
   srand(RAND_SEED);
   // heap_sort_test(&g);
   Vertex* s = g.get_source();

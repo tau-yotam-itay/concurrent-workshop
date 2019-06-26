@@ -9,9 +9,15 @@ typedef struct thread_args {
 
 void print_distances(Graph* g)
 {
+  int dist;
+  ofstream outputFile;
+  outputFile.open("our_distances");
   for (int i = 0; i < g->get_verticies_num(); i++) {
-    printf("%d\n", g->get_vertex(i)->get_dist());
+    dist = g->get_vertex(i)->get_dist();
+    outputFile << dist << endl;
+    //printf("%d\n", g->get_vertex(i)->get_dist());
   }
+  outputFile.close();
 }
 
 bool is_only_worker(int thread_idx, int* threads_status, Multi_Queue* Q)
