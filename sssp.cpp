@@ -24,14 +24,18 @@ void print_distances(Graph* g)
 bool is_only_worker(int thread_idx, int* threads_status, Multi_Queue* Q)
 {
   bool locked = false;
-  locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
-  if(!locked){return false;}
+  do{
+    locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
+  }
+  while(!locked);
   for (int i = 0; i < P_CONSTANT; i++) {
     if (i != thread_idx && threads_status[i] == 1) {
+      threads_status[thread_idx] = 0;
       Q->set_all_sleep_lock(false);
       return false;
     }
   }
+  threads_status[thread_idx] = 0;
   Q->set_all_sleep_lock(false);
   return true;
 }
@@ -67,6 +71,7 @@ void* thread_worker(void* args)
   int* thread_status = t_args->thread_status;
   int thread_idx = t_args->thread_idx;
   int relax_count = 0;
+  thread_status[thread_idx] = 1;
 
   while (!Q->finish) {
     if (is_only_worker(thread_idx, thread_status, Q) && Q->is_empty() && !Q->finish) {  // check if time to terminate
@@ -74,7 +79,7 @@ void* thread_worker(void* args)
       wake_all_threads(Q->get_sem_mutex());
       break;
     }
-    thread_status[thread_idx] = 0;
+    
     sem_wait(Q->get_sem_mutex());
     thread_status[thread_idx] = 1;
     if (Q->finish) {
