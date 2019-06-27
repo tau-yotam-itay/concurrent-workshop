@@ -86,6 +86,7 @@ void heap_sort_test(int num_of_verticies)
     curr_heap_node = new BH_Node(v);
     true_sorted_dist_arr[i] = curr_heap_node->get_dist();
     heap->insert(curr_heap_node);
+    printTree(heap->get_min(),NULL,false);
     // printf("%d ,", num_of_verticies - i);
   }
   /*for (int j = 0; j < i; j++) {

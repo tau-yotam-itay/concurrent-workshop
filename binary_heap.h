@@ -47,6 +47,9 @@ class Binary_Heap
   BH_Node* min_node;
   BH_Node* last_node;
   // value swap - make sure it doesnt cause external pointers problems
+  void swap_left(BH_Node* child, BH_Node* parent);
+  void swap_right(BH_Node* child, BH_Node* parent);
+  void swap_relatives(BH_Node* child, BH_Node* parent);
   void swap(BH_Node* child, BH_Node* parent);
   void choose_swap(BH_Node* parent, BH_Node** chosen_node);
   void heapify_up(BH_Node* node);

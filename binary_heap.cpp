@@ -99,26 +99,104 @@ BH_Node* BH_Node::go_rightmost(BH_Node* curr_node)
   }
 }
 
+void Binary_Heap::swap_left(BH_Node* child, BH_Node* parent){
+  BH_Node *s, *t;
+
+  s = parent->get_right();
+  t = child->get_right();
+  if(t){  t->set_parent(parent);}
+  parent->set_right(t);
+  if(s){  s->set_parent(child);}
+  child->set_right(s);
+
+  s = child->get_left();
+  if(s){  s->set_parent(parent);}
+  parent->set_left(s);
+
+  t = parent->get_parent();
+    if(t && t->get_left() == parent){
+    t->set_left(child);
+  }
+  else if(t && t->get_right() == parent){
+    t->set_right(child);
+  }
+  child->set_parent(t);
+
+  child->set_left(parent);
+  parent->set_parent(child);
+}
+
+void Binary_Heap::swap_right(BH_Node* child, BH_Node* parent){
+  BH_Node *s, *t;
+
+  s = parent->get_left();
+  t = child->get_left();
+  if(t){  t->set_parent(parent);}
+  parent->set_left(t);
+  if(s){  s->set_parent(child);}
+  child->set_left(s);
+
+  s = child->get_right();
+  if(s){  s->set_parent(parent);}
+  parent->set_right(s);
+
+  t = parent->get_parent();
+  if(t && t->get_right() == parent){
+    t->set_right(child);
+  }
+  else if(t && t->get_left() == parent){
+    t->set_left(child);
+  }
+  child->set_parent(t);
+
+  child->set_right(parent);
+  parent->set_parent(child);
+}
+
+void Binary_Heap::swap_relatives(BH_Node* child, BH_Node* parent){
+  BH_Node* c_left = child->get_left();
+  BH_Node* c_right = child->get_right();
+  BH_Node* c_parent = child->get_parent();
+  BH_Node* p_left = parent->get_left();
+  BH_Node* p_right = parent->get_right();
+
+  if(c_parent->get_left() == child){
+    c_parent->set_left(parent);
+  }
+  if(c_parent->get_right() == child){
+    c_parent->set_right(parent);
+  }
+
+  child->set_left(parent->get_left());
+  child->set_right(parent->get_right());
+  child->set_parent(parent->get_parent());
+
+  if(p_left){ p_left->set_parent(child);}
+  if(p_right){  p_right->set_parent(child);}
+
+  parent->set_left(c_left);
+  parent->set_right(c_right);
+  parent->set_parent(c_parent);
+}
+
 // value swap - make sure it doesnt cause external pointers problems
 void Binary_Heap::swap(BH_Node* child, BH_Node* parent)
 {
-  int c_dist = child->get_dist();
-  Vertex* c_vertex = child->get_vertex();
-  BH_Node* c_parent = child->get_parent();
-  BH_Node* c_left = child->get_left();
-  BH_Node* c_right = child->get_right();
-
-  child->set_dist(parent->get_dist());
-  child->set_vertex(parent->get_vertex());
-  child->set_parent(parent->get_parent());
-  child->set_left(parent->get_left());
-  child->set_right(parent->get_right());
-
-  parent->set_dist(c_dist);
-  parent->set_vertex(c_vertex);
-  parent->set_parent(c_parent);
-  parent->set_left(c_left);
-  parent->set_right(c_right);
+  if(last_node == child){
+    last_node = parent;
+  }
+  if(parent->get_left() == child){  //child is left child of parent
+    swap_left(child,parent);
+  }
+  else if(parent->get_right() == child){  //child is right child of parent
+    swap_right(child,parent);
+  }
+  else{
+    swap_relatives(child,parent); //parent is not a direct parent of child (for swapping root and leaf)
+  }
+  if(child->is_root()){
+    min_node = child;
+  }
 }
 
 void Binary_Heap::heapify_up(BH_Node* node)
@@ -126,11 +204,11 @@ void Binary_Heap::heapify_up(BH_Node* node)
   BH_Node* parent_ptr;
   //while (node != min_node && (node->get_dist() < node->get_parent()->get_dist() )) {
   while ( !node->is_root() && (node->get_dist() < node->get_parent()->get_dist() )) {
-    parent_ptr = node->get_parent();
+    // parent_ptr = node->get_parent();
     swap(node, node->get_parent());
-    node = parent_ptr;
+    // node = parent_ptr;
   }
-  if(node->is_root()){ min_node = node;}
+  // if(node->is_root()){ min_node = node;}
 }
 
 volatile bool* Binary_Heap::get_lock() { return &lock; }
@@ -164,11 +242,11 @@ void Binary_Heap::heapify_down(BH_Node* node)
   BH_Node* chosen_node = NULL;
   choose_swap(node,&chosen_node);
   if(chosen_node){
-    swap(node, chosen_node);
-    heapify_down(chosen_node);
-    if(node->is_root()){
-      min_node = chosen_node;
-    }
+    swap(chosen_node, node);
+    heapify_down(node);
+    // if(node->is_root()){
+    //   min_node = chosen_node;
+    // }
   }
 }
 
@@ -220,7 +298,7 @@ BH_Node* Binary_Heap::extract_min()
     last_node = NULL;
     return min;
   }
-  swap(min_node, last_node);
+  swap(last_node,min_node);
   min = last_node;
   if(min->get_dist()<0){
     printf("d\n");
