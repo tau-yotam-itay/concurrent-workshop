@@ -14,7 +14,7 @@ void print_distances(Graph* g)
   ofstream outputFile;
   outputFile.open("our_distances");
   for (int i = 0; i < g->get_verticies_num(); i++) {
-    dist = g->get_vertex(i)->get_dist();
+    dist = g->vertices[i]->get_dist();
     outputFile << dist << endl;
     //printf("%d\n", g->get_vertex(i)->get_dist());
   }
@@ -23,7 +23,8 @@ void print_distances(Graph* g)
 
 bool is_only_worker(int thread_idx, int* threads_status, Multi_Queue* Q)
 {
-  bool locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
+  bool locked = false;
+  locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
   if(!locked){return false;}
   for (int i = 0; i < P_CONSTANT; i++) {
     if (i != thread_idx && threads_status[i] == 1) {

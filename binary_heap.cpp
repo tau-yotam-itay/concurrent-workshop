@@ -197,6 +197,14 @@ void Binary_Heap::swap(BH_Node* child, BH_Node* parent)
   if(child->is_root()){
     min_node = child;
   }
+  // Vertex* v = child->get_vertex();
+  // int dist = child->get_dist();
+
+  // child->set_dist(parent->get_dist());
+  // child->set_vertex(parent->get_vertex());
+
+  // parent->set_dist(dist);
+  // parent->set_vertex(v);
 }
 
 void Binary_Heap::heapify_up(BH_Node* node)

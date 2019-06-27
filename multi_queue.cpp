@@ -23,12 +23,14 @@ BH_Node* allocate_node(Vertex* v, int dist)
 }
 
 // free node using debra
-void Multi_Queue::destroy_node(BH_Node* node) { delete node; }
+void Multi_Queue::destroy_node(BH_Node* node) { 
+  //delete node; 
+  }
 
 void Multi_Queue::insert(Vertex* v)
 {
   // enter debra quiscent state
-  volatile bool thrnd_won;
+  volatile bool thrnd_won = false;
   int rand_queue_index;
   do {
     rand_queue_index = rand() % (C * P);                                                             // +1 needed?

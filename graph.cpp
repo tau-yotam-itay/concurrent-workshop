@@ -56,26 +56,28 @@ void Vertex::print_neighbors()
   }
 }
 
-void Graph::add_to_vertex_list(Vertex* v)
-{
-  vertex_list_node* new_vertex = new vertex_list_node;
-  new_vertex->v = v;
-  new_vertex->next = vertex_list;
-  vertex_list = new_vertex;
-  count++;
-}
+// void Graph::add_to_vertex_list(Vertex* v)
+// {
+//   vertex_list_node* new_vertex = new vertex_list_node;
+//   new_vertex->v = v;
+//   new_vertex->next = vertex_list;
+//   vertex_list = new_vertex;
+//   count++;
+// }
 
 void Graph::add_edge(int key1, int key2, int weight)
 {
-  Vertex* v1 = get_vertex(key1);
-  Vertex* v2 = get_vertex(key2);
+  // Vertex* v1 = get_vertex(key1);
+  // Vertex* v2 = get_vertex(key2);
+  Vertex* v1 = vertices[key1];
+  Vertex* v2 = vertices[key2];
   if (!v1) {
     v1 = new Vertex(key1);
-    add_to_vertex_list(v1);
+    vertices[key1] = v1;
   }
   if (!v2) {
     v2 = new Vertex(key2);
-    add_to_vertex_list(v2);
+    vertices[key2] = v2;
   }
   v1->add_neighbor(v2, weight);
   v2->add_neighbor(v1, weight);
@@ -84,9 +86,16 @@ void Graph::add_edge(int key1, int key2, int weight)
 Graph::Graph(const char* filepath)
 {
   int c = 0;
-  vertex_list = NULL;
+  //vertex_list = NULL;
   ifstream fp(filepath);
   fp >> number_of_vertices >> number_of_edges >> source_vertex_key;
+  
+  vertices = (Vertex**)calloc(number_of_vertices,sizeof(Vertex*));
+  if(!vertices){exit(EXIT_FAILURE);}
+  for(int i=0;i<number_of_vertices;i++){
+    vertices[i]=NULL;
+  }
+
   int key1, key2, weight;
   while (fp >> key1 >> key2 >> weight) {
     add_edge(key1, key2, weight);
@@ -98,29 +107,30 @@ Graph::Graph(const char* filepath)
   }
 }
 
-Vertex* Graph::get_vertex(int key)
-{
-  vertex_list_node* cur = vertex_list;
-  while (cur != NULL) {
-    if (cur->v->get_key() == key) {
-      return cur->v;
-    }
-    cur = cur->next;
-  }
-  return NULL;
-}
+// Vertex* Graph::get_vertex(int key)
+// {
+//   vertex_list_node* cur = vertex_list;
+//   while (cur != NULL) {
+//     if (cur->v->get_key() == key) {
+//       return cur->v;
+//     }
+//     cur = cur->next;
+//   }
+//   return NULL;
+// }
 
-Vertex* Graph::get_source() { return get_vertex(this->source_vertex_key); }
+Vertex* Graph::get_source() { return vertices[source_vertex_key]; }
 
 int Graph::get_verticies_num() { return number_of_vertices; }
 
 void Graph::print_graph()
 {
   printf("id, (key,weight)\n");
-  vertex_list_node* cur = vertex_list;
-  while (cur != NULL) {
-    cur->v->print_neighbors();
+  int i = 0;
+  while (i < number_of_vertices) {
+    Vertex* v = vertices[i];
+    v->print_neighbors();
     printf("\n");
-    cur = cur->next;
+    i++;
   }
 }

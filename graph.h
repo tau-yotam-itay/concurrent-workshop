@@ -4,6 +4,7 @@
 #include <climits>
 #include <fstream>
 #include <tuple>
+#include <map>
 //#include <iosfwd>
 //#include <iostream>
 //#include <string>
@@ -46,17 +47,19 @@ class Graph
   int number_of_vertices;
   int number_of_edges;
   int source_vertex_key;
-  vertex_list_node* vertex_list;
+  //vertex_list_node* vertex_list;
+  
 
-  void add_to_vertex_list(Vertex* v);
+  // void add_to_vertex_list(Vertex* v);
 
   void add_edge(int key1, int key2, int weight);
 
  public:
+  Vertex** vertices;
   int count = 0;
 
   Graph(const char* filepath);
-  Vertex* get_vertex(int key);
+  // Vertex* get_vertex(int key);
   Vertex* get_source();
   int get_verticies_num();
   void print_graph();
