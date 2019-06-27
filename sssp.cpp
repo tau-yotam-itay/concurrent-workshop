@@ -49,7 +49,13 @@ void wake_all_threads(sem_t* sem)
 
 void relax(Multi_Queue* Q, int dist, neighbor* n, int*relax_count, int tidx)
 {
+  bool locked = false;
   int new_dist = dist + n->weight;    // d' = d(n) + w(v,n)
+  Vertex* v = n->v;
+  do{
+    locked = __sync_bool_compare_and_swap(v->get_lock(), false, true);
+  }while(!locked);
+
   if (new_dist < n->v->get_dist()) {  // if distance is smaller - relax and add to Q
     n->v->set_dist(new_dist);
     // print progress of thread
@@ -60,6 +66,8 @@ void relax(Multi_Queue* Q, int dist, neighbor* n, int*relax_count, int tidx)
     Q->insert(n->v);
     sem_post(Q->get_sem_mutex());
   }
+
+  v->set_lock(false);
   // maybe if finished node gets better distance then he is re inserted to queue? check this
 }
 

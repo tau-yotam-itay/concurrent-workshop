@@ -8,6 +8,7 @@ Vertex::Vertex(int k)
   key = k;
   neighbors = NULL;
   dist = INT_MAX;
+  lock = false;
 }
 
 Vertex::Vertex(int k, int new_dist)
@@ -15,6 +16,7 @@ Vertex::Vertex(int k, int new_dist)
   key = k;
   neighbors = NULL;
   dist = new_dist;
+  lock = false;
 }
 
 int Vertex::get_key() { return key; }
@@ -54,6 +56,13 @@ void Vertex::print_neighbors()
     printf("(%d, %d), ", cur->v->get_key(), cur->weight);
     cur = cur->next;
   }
+}
+
+volatile bool* Vertex::get_lock() { return &lock; }
+
+void Vertex::set_lock(bool b)
+{
+  lock = b;
 }
 
 // void Graph::add_to_vertex_list(Vertex* v)

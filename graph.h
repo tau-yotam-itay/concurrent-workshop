@@ -28,6 +28,7 @@ class Vertex
   int key;
   unsigned int dist;
   neighbor* neighbors;
+  volatile bool lock;
 
  public:
   Vertex(int k);
@@ -39,6 +40,8 @@ class Vertex
   neighbor* get_neighbors();
   neighbor* get_neighbor(int key);
   void print_neighbors();
+  volatile bool* get_lock();
+  void set_lock(bool b);
 };
 
 class Graph
