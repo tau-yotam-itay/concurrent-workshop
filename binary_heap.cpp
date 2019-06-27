@@ -182,29 +182,29 @@ void Binary_Heap::swap_relatives(BH_Node* child, BH_Node* parent){
 // value swap - make sure it doesnt cause external pointers problems
 void Binary_Heap::swap(BH_Node* child, BH_Node* parent)
 {
-  if(last_node == child){
-    last_node = parent;
-  }
-  if(parent->get_left() == child){  //child is left child of parent
-    swap_left(child,parent);
-  }
-  else if(parent->get_right() == child){  //child is right child of parent
-    swap_right(child,parent);
-  }
-  else{
-    swap_relatives(child,parent); //parent is not a direct parent of child (for swapping root and leaf)
-  }
-  if(child->is_root()){
-    min_node = child;
-  }
-  // Vertex* v = child->get_vertex();
-  // int dist = child->get_dist();
+  // if(last_node == child){
+  //   last_node = parent;
+  // }
+  // if(parent->get_left() == child){  //child is left child of parent
+  //   swap_left(child,parent);
+  // }
+  // else if(parent->get_right() == child){  //child is right child of parent
+  //   swap_right(child,parent);
+  // }
+  // else{
+  //   swap_relatives(child,parent); //parent is not a direct parent of child (for swapping root and leaf)
+  // }
+  // if(child->is_root()){
+  //   min_node = child;
+  // }
+  Vertex* v = child->get_vertex();
+  int dist = child->get_dist();
 
-  // child->set_dist(parent->get_dist());
-  // child->set_vertex(parent->get_vertex());
+  child->set_dist(parent->get_dist());
+  child->set_vertex(parent->get_vertex());
 
-  // parent->set_dist(dist);
-  // parent->set_vertex(v);
+  parent->set_dist(dist);
+  parent->set_vertex(v);
 }
 
 void Binary_Heap::heapify_up(BH_Node* node)
@@ -212,11 +212,11 @@ void Binary_Heap::heapify_up(BH_Node* node)
   BH_Node* parent_ptr;
   //while (node != min_node && (node->get_dist() < node->get_parent()->get_dist() )) {
   while ( !node->is_root() && (node->get_dist() < node->get_parent()->get_dist() )) {
-    // parent_ptr = node->get_parent();
+    parent_ptr = node->get_parent();
     swap(node, node->get_parent());
-    // node = parent_ptr;
+    node = parent_ptr;
   }
-  // if(node->is_root()){ min_node = node;}
+  if(node->is_root()){ min_node = node;}
 }
 
 volatile bool* Binary_Heap::get_lock() { return &lock; }
@@ -251,7 +251,7 @@ void Binary_Heap::heapify_down(BH_Node* node)
   choose_swap(node,&chosen_node);
   if(chosen_node){
     swap(chosen_node, node);
-    heapify_down(node);
+    heapify_down(chosen_node);
     // if(node->is_root()){
     //   min_node = chosen_node;
     // }
@@ -308,6 +308,9 @@ BH_Node* Binary_Heap::extract_min()
   }
   swap(last_node,min_node);
   min = last_node;
+  if(min->get_parent()==NULL && min->is_leaf()){
+    printf("s\n");
+  }
   if(min->get_dist()<0){
     printf("d\n");
   }
