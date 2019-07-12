@@ -2,7 +2,7 @@
 #define CONCURRENT_WORKSHOP_MASTER_MULTI_QUEUE_H
 
 #include "binary_heap.h"
-#include "constants.h"
+#include "../constants.h"
 #include <semaphore.h>
 //#include <pthread.h>
 //#include <sys/sem.h>

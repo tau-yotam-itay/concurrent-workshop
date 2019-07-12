@@ -1,5 +1,5 @@
 #include "multi_queue.h"
-#include "recordmgr/record_manager.h"
+#include "../recordmgr/record_manager.h"
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1
 

@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS+=-g -std=c++11 -lpthread
-OBJS=main.o binary_heap.o multi_queue.o sssp.o tests.o graph.o
+OBJS=main.o multiqueue/binary_heap.o multiqueue/multi_queue.o sssp.o tests.o graph.o
 EXEC=concurrent_workshop
 
 

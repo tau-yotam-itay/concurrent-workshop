@@ -1,7 +1,7 @@
 #ifndef CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
 #define CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
 
-#include "graph.h"
+#include "../graph.h"
 //#include <climits>
 //#include <iosfwd>
 //#include <limits>
