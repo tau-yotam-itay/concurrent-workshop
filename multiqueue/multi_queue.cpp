@@ -43,7 +43,7 @@ void Multi_Queue::insert(Vertex* v)
   // exit debra quiscent state
 }
 
-std::tuple<Vertex*, int> Multi_Queue::extract_min()  // dead lock here - stuck in loop while other thread terminates
+std::tuple<Vertex*, int> Multi_Queue::extract_min()
 {
   // enter debra quiscent state
   Binary_Heap *bh1 = NULL, *bh2 = NULL, *chosen_heap = NULL;
