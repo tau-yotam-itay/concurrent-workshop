@@ -7,13 +7,23 @@
 class Skiplist_node
 {
 private:
-    int dist;
-    int level;
     Skiplist_node **next_arr;
     Vertex* v;
+    int dist;
+    int level;
+    bool inserting;
 
 public:
     Skiplist_node(int level_arg, Vertex* vertex);
+    bool is_deleted();
+    void set_inserting(bool insert);
+    int get_dist();
+    int get_level();
+    bool is_inserting();
+    Skiplist_node **get_next_arr();
+    Vertex *get_vertex();
+    Skiplist_node* get_marked_ptr();
+    Skiplist_node* get_unmarked_ptr();
 };
 
 
@@ -22,17 +32,21 @@ class Skiplist
 {
 
 private:
+    //fields:
     int max_level;
     float next_level_prob;
-    int level; //higest level chosen so far
+    int nlevels; //higest level chosen so far
     Skiplist_node *head;
-    std::tuple<Skiplist_node*, Skiplist_node*, Skiplist_node*> locate_preds(int dist);
+    Skiplist_node *tail;
 
-public:
-    Skiplist(int MAX_LVL, float P);
+    //functions:
     int random_level();
     Skiplist_node* create_node(int level_arg, Vertex* vertex);
     void destroy_node(Skiplist_node* node);
+    Skiplist_node* locate_preds(int dist, Skiplist_node** preds, Skiplist_node** succs);
+
+public:
+    Skiplist(int MAX_LVL, float P);
     void insert(Vertex* vertex);
     std::tuple<Vertex*, int> extract_min();
     //void display_list();
