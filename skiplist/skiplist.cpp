@@ -70,6 +70,7 @@ Skiplist::Skiplist(int max_lvl, float prob, int offset)
     head = new Skiplist_node(max_lvl, NULL);
 };
 
+bool Skiplist::is_empty(){ return head == NULL;}
 
 void Skiplist::insert(Vertex* vertex){
     //enter quicent state

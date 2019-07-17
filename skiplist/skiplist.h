@@ -1,8 +1,11 @@
 #ifndef CONCURRENT_WORKSHOP_SKIPLIST_H
 #define CONCURRENT_WORKSHOP_SKIPLIST_H
 
-#include "graph.h"
+#include "../priority_queue.h"
 
+#define MAX_LVL 25
+#define LEVEL_PROB 0.5
+#define BOUND_OFFSET 50
 
 class Skiplist_node
 {
@@ -28,7 +31,7 @@ public:
 
 
 
-class Skiplist
+class Skiplist: public Priority_Queue
 {
 
 private:
@@ -49,9 +52,10 @@ private:
 
 public:
     Skiplist(int max_lvl, float prob, int offset);
-    void insert(Vertex* vertex);
-    Vertex* extract_min();
-    //void display_list();
+
+    void insert(Vertex* vertex) override;
+    Vertex* extract_min() override;
+    bool is_empty() override;
 };
 
 #endif //CONCURRENT_WORKSHOP_SKIPLIST_H
