@@ -6,11 +6,12 @@
 
 Skiplist_node::Skiplist_node(int level_arg, Vertex* vertex)
 {
-    dist = v->get_dist();
+    dist = vertex->get_dist();
     level = level_arg;
     next_arr = new Skiplist_node*[level+1];
     memset(next_arr, 0, sizeof(Skiplist_node*)*(level+1));
     v = vertex;
+    inserting = false;
 };
 
 
@@ -21,18 +22,18 @@ Skiplist_node* Skiplist::create_node(int level_arg, Vertex* vertex){
 
 
 bool Skiplist_node::is_deleted() {
-    if( (uintptr_t)next_arr[0] & 1){
+    if(((uintptr_t)(this)) & 1){
         return true;
     }
     return false;
 }
 
 Skiplist_node* Skiplist_node::get_marked_ptr() {
-    return (Skiplist_node*) ( (uintptr_t)next_arr[0] | 1 );
+    return (Skiplist_node *)(((uintptr_t)(this)) | 1);
 }
 
 Skiplist_node* Skiplist_node::get_unmarked_ptr() {
-    return (Skiplist_node*) ( (uintptr_t)next_arr[0] & ~1 );
+    return (Skiplist_node *)(((uintptr_t)(this)) & ~1);
 }
 
 int Skiplist_node::get_dist() {
@@ -60,20 +61,27 @@ void Skiplist_node::set_inserting(bool insert) {
 }
 
 
-Skiplist::Skiplist(int max_lvl, float prob, int offset)
+Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(p)
 {
     max_level = max_lvl;
     next_level_prob = prob;
     bound_offset = offset;
-    nlevels = 0;
+    nlevels = 1;
 
-    head = new Skiplist_node(max_lvl, NULL);
+    Vertex* head_v = new Vertex(INT_MIN, INT_MIN);
+    Vertex* tail_v = new Vertex(INT_MAX, INT_MAX);
+    head = new Skiplist_node(max_lvl, head_v);
+    tail = new Skiplist_node(max_lvl, tail_v);
+    for(int i = 0; i < max_lvl; i++){
+        head->get_next_arr()[i] = tail;
+    }
 };
 
-bool Skiplist::is_empty(){ return head == NULL;}
+bool Skiplist::is_empty(){ return head->get_next_arr()[0] == tail;}
 
 void Skiplist::insert(Vertex* vertex){
     //enter quicent state
+    printf("insert\n");
     int height = random_level(), i = 1;
     Skiplist_node* new_node = create_node(height, vertex);
     Skiplist_node* del_node = NULL;
@@ -83,7 +91,7 @@ void Skiplist::insert(Vertex* vertex){
     do{
         del_node = locate_preds(vertex->get_dist(), preds, succs);
         new_node->get_next_arr()[0] = succs[0];
-    }while(__sync_bool_compare_and_swap(&preds[0]->get_next_arr()[0], succs[0], new_node));
+    }while(!__sync_bool_compare_and_swap(&preds[0]->get_next_arr()[0], succs[0], new_node));
 
     while(i < height){
         new_node->get_next_arr()[i] = succs[i];
@@ -110,13 +118,13 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
     int i = nlevels - 1;
     Skiplist_node *pred = head, *cur, *del = NULL;
     bool d;
-
+    // pred = x;    cur = x_next;
     while(i >= 0){
         cur = pred->get_next_arr()[i];
         d = cur->is_deleted();
         cur = cur->get_unmarked_ptr();
         while(cur->get_dist() < dist || cur->is_deleted() ||
-                (d && i == 0)){
+                ( (i == 0) && d ) ){
             if(d && i == 0){
                 del = cur;
             }
@@ -129,7 +137,7 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
         succs[i] = cur;
         i--;
     }
-    return NULL;
+    return del;
 }
 
 //credit: geeksforgeeks.com

@@ -7,6 +7,7 @@
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1
 #define RAND_SEED 0
+#define NUM_OF_THREADS 2
 
 class Priority_Queue{
 
@@ -16,8 +17,9 @@ protected:
     volatile bool all_sleep_lock;
 
 public:
-    int finish;
+    bool finish;
 
+    Priority_Queue(int p);
     virtual void insert(Vertex* vertex) = 0;
     virtual Vertex* extract_min() = 0;
     virtual bool is_empty() = 0;

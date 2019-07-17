@@ -51,7 +51,7 @@ private:
     void restructure();
 
 public:
-    Skiplist(int max_lvl, float prob, int offset);
+    Skiplist(int max_lvl, float prob, int offset, int p);
 
     void insert(Vertex* vertex) override;
     Vertex* extract_min() override;
