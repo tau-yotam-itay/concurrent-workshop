@@ -43,7 +43,7 @@ void Multi_Queue::insert(Vertex* v)
   // exit debra quiscent state
 }
 
-std::tuple<Vertex*, int> Multi_Queue::extract_min()
+Vertex* Multi_Queue::extract_min()
 {
   // enter debra quiscent state
   Binary_Heap *bh1 = NULL, *bh2 = NULL, *chosen_heap = NULL;
@@ -57,7 +57,7 @@ std::tuple<Vertex*, int> Multi_Queue::extract_min()
   } while (!chosen_heap);
 
   BH_Node* extracted_node = chosen_heap->extract_min();
-  std::tuple<Vertex*, int> ret = std::make_tuple(extracted_node->get_vertex(), extracted_node->get_dist());
+  Vertex* ret = extracted_node->get_vertex();
   destroy_node(extracted_node);
   chosen_heap->set_lock(false);
   // exit debra quiscent state

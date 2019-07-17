@@ -1,6 +1,8 @@
 #include "skiplist.h"
 #include <cstring>
 
+#define EMPTY_QUEUE NULL
+
 
 Skiplist_node::Skiplist_node(int level_arg, Vertex* vertex)
 {
@@ -58,13 +60,14 @@ void Skiplist_node::set_inserting(bool insert) {
 }
 
 
-Skiplist::Skiplist(int MAX_LVL, float P)
+Skiplist::Skiplist(int max_lvl, float prob, int offset)
 {
-    max_level = MAX_LVL;
-    next_level_prob = P;
+    max_level = max_lvl;
+    next_level_prob = prob;
+    bound_offset = offset;
     nlevels = 0;
 
-    head = new Skiplist_node(MAX_LVL, NULL);
+    head = new Skiplist_node(max_lvl, NULL);
 };
 
 
@@ -125,8 +128,6 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
         succs[i] = cur;
         i--;
     }
-
-
     return NULL;
 }
 
@@ -143,6 +144,67 @@ int Skiplist::random_level() {
 }
 
 
-std::tuple<Vertex*, int> Skiplist::extract_min(){
+void Skiplist::restructure(){
+    int i = nlevels - 1;
+    Skiplist_node *pred, *h, *cur;
 
+    while(i>0){
+        h = head->get_next_arr()[i];
+        cur = pred->get_next_arr()[i];
+        if(!h->is_deleted()){
+            i--;
+            continue;
+        }
+        while(cur->is_deleted()){
+            pred = cur;
+            cur = pred->get_next_arr()[i];
+        }
+        if(__sync_bool_compare_and_swap(&head->get_next_arr()[i], h, cur)){
+            i--;
+        }
+    }
+}
+
+void Skiplist::destroy_node(Skiplist_node* node){
+
+}
+
+Vertex* Skiplist::extract_min(){
+    Skiplist_node *x = head, *newhead = NULL, *obshead = x->get_next_arr()[0], *next, *cur;
+    int offset = 0;
+    bool d = true;
+    Vertex* v;
+
+    do{
+        next = x->get_next_arr()[0];
+        d = x->is_deleted();
+        if(next == tail){
+            return EMPTY_QUEUE;
+        }
+        if (x->is_inserting() && newhead == NULL){
+            newhead = x;
+        }
+        next = __sync_fetch_and_or(&x->get_next_arr()[0], 1);
+        d = x->is_deleted();
+        offset++;
+        x = next;
+    }while(!d);
+
+    v = x->get_vertex();
+    if(offset < bound_offset){
+        return v;
+    }
+    if(newhead == NULL){
+        newhead = x;
+    }
+    if(__sync_bool_compare_and_swap(&head->get_next_arr()[0], obshead, newhead->get_marked_ptr())){
+        restructure();
+        cur = obshead;
+        while(cur != newhead){
+            next = cur->get_next_arr()[0];
+            destroy_node(cur);
+            cur = next;
+        }
+    }
+    return v;
 }

@@ -36,7 +36,7 @@ class Multi_Queue
   sem_t* get_sem_mutex();
   Multi_Queue(int c, int p);
   void insert(Vertex* v);
-  std::tuple<Vertex*, int> extract_min();
+  Vertex* extract_min();
   volatile bool* get_all_sleep_lock();
   void set_all_sleep_lock(bool b);
   bool is_empty();

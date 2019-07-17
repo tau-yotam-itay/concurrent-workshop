@@ -34,6 +34,7 @@ class Skiplist
 private:
     //fields:
     int max_level;
+    int bound_offset;
     float next_level_prob;
     int nlevels; //higest level chosen so far
     Skiplist_node *head;
@@ -44,11 +45,12 @@ private:
     Skiplist_node* create_node(int level_arg, Vertex* vertex);
     void destroy_node(Skiplist_node* node);
     Skiplist_node* locate_preds(int dist, Skiplist_node** preds, Skiplist_node** succs);
+    void restructure();
 
 public:
-    Skiplist(int MAX_LVL, float P);
+    Skiplist(int max_lvl, float prob, int offset);
     void insert(Vertex* vertex);
-    std::tuple<Vertex*, int> extract_min();
+    Vertex* extract_min();
     //void display_list();
 };
 

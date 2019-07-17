@@ -93,12 +93,13 @@ void* thread_worker(void* args)
     if (Q->finish) {
       break;
     }
-    std::tuple<Vertex*, int> min = Q->extract_min();
-    Vertex* v = get<0>(min);
-    int dist = get<1>(min);
+    Vertex* min = Q->extract_min();
+    if (!min){ continue; }
 
-    neighbor* n = v->get_neighbors();
-    while (n != NULL) {  // iterate all neighbors of v
+    int dist = min->get_dist();
+
+    neighbor* n = min->get_neighbors();
+    while (n != NULL) {  // iterate all neighbors of min
       relax(Q, dist, n, &relax_count, thread_idx);
       n = n->next;
     }
