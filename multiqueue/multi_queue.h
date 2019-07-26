@@ -1,6 +1,8 @@
 #ifndef CONCURRENT_WORKSHOP_MASTER_MULTI_QUEUE_H
 #define CONCURRENT_WORKSHOP_MASTER_MULTI_QUEUE_H
 
+#define C_CONSTANT 2
+
 #include "binary_heap.h"
 #include "../priority_queue.h"
 

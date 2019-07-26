@@ -8,7 +8,7 @@ typedef struct thread_args {
   int thread_idx;
 } thread_args;
 
-void print_distances(Graph* g)
+void export_distances(Graph* g)
 {
   int dist;
   ofstream outputFile;
@@ -60,9 +60,9 @@ void relax(Priority_Queue* Q, int dist, neighbor* n, int*relax_count, int tidx)
     n->v->set_dist(new_dist);
     // print progress of thread
     *relax_count = *relax_count + 1;
-    if (*relax_count%PRINT_INTERVAL == 0){
-      printf("thread %d: relax operations done: %d\n",tidx,*relax_count);
-    }
+    // if (*relax_count%PRINT_INTERVAL == 0){
+    //   printf("thread %d: relax operations done: %d\n",tidx,*relax_count);
+    // }
     Q->insert(n->v);
     sem_post(Q->get_sem_mutex());
   }

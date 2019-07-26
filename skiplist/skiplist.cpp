@@ -132,7 +132,7 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
 void Skiplist::insert(Vertex* vertex){
     //enter quicent state
     int height = random_level(), i = 1;
-    printf("insert, height= %d\n",height);
+    // printf("insert, height= %d\n",height);
     Skiplist_node* new_node = create_node(height, vertex);
     Skiplist_node* del_node = NULL;
     Skiplist_node **preds = (Skiplist_node**)calloc(max_level,sizeof(Skiplist_node*));
@@ -191,7 +191,7 @@ void Skiplist::restructure(){
 }
 
 Vertex* Skiplist::extract_min(){
-    printf("extract min\n");
+    // printf("extract min\n");
     Skiplist_node *x = head, *newhead = NULL, *obshead = x->get_next_arr()[0], *next, *cur;
     int offset = 0;
     bool d = true;
