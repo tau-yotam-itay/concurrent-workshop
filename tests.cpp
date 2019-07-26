@@ -120,3 +120,20 @@ void heap_sort_test(int num_of_verticies)
     // printf(heap_sorted_dist_arr[j] + ",");
   }
 }
+
+void skiplist_sort_test(){
+  Vertex* v;
+  Skiplist* q = new Skiplist(10,0.5,50,2);
+  for(int i=20;i>=0;i--){
+    v = new Vertex(i,i);
+    q->insert(v);
+    q->print_skiplist();
+  }
+  while(!q->is_empty()){
+    v = q->extract_min();
+    if(v)
+      printf("%d\n",v->get_dist());
+      q->print_skiplist();
+  }
+  bool a = q->is_empty();
+}

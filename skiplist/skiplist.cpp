@@ -77,7 +77,13 @@ Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(
     }
 };
 
-bool Skiplist::is_empty(){ return head->get_next_arr()[0] == tail;}
+bool Skiplist::is_empty(){
+    Skiplist_node* node = head->get_next_arr()[0];
+    while(node->is_deleted()){
+        node = node->get_unmarked_ptr()->get_next_arr()[0];
+    }
+    return node == tail;
+}
 
 //credit: geeksforgeeks.com
 int Skiplist::random_level() {
@@ -97,7 +103,8 @@ void Skiplist::destroy_node(Skiplist_node* node){
 }
 
 Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_node** succs){
-    int i = nlevels - 1;
+    int m = max_level;
+    int i = m - 1;
     Skiplist_node *pred = head, *cur, *del = NULL;
     bool d;
     // pred = x;    cur = x_next;
@@ -124,11 +131,16 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
 
 void Skiplist::insert(Vertex* vertex){
     //enter quicent state
-    printf("insert\n");
     int height = random_level(), i = 1;
+    printf("insert, height= %d\n",height);
     Skiplist_node* new_node = create_node(height, vertex);
     Skiplist_node* del_node = NULL;
-    Skiplist_node *preds[max_level], *succs[max_level];
+    Skiplist_node **preds = (Skiplist_node**)calloc(max_level,sizeof(Skiplist_node*));
+    Skiplist_node **succs = (Skiplist_node**)calloc(max_level,sizeof(Skiplist_node*));
+    if(!preds || !succs){
+        perror("calloc");
+        exit(EXIT_FAILURE);
+    }
 
     new_node->set_inserting(true);
     do{
@@ -136,9 +148,9 @@ void Skiplist::insert(Vertex* vertex){
         new_node->get_next_arr()[0] = succs[0];
     }while(!__sync_bool_compare_and_swap(&preds[0]->get_next_arr()[0], succs[0], new_node));
 
-    while(i < height){
+    while(i <= height){
         new_node->get_next_arr()[i] = succs[i];
-        if(new_node->get_next_arr()[0]->is_deleted() || succs[i]->get_next_arr()[0]->is_deleted() || succs[i] == del_node){
+        if(succs[i] == del_node || new_node->get_next_arr()[0]->is_deleted() || succs[i]->get_next_arr()[0]->is_deleted()){
             break;
         }
         if(__sync_bool_compare_and_swap(&preds[i]->get_next_arr()[i], succs[i], new_node)){
@@ -152,11 +164,13 @@ void Skiplist::insert(Vertex* vertex){
         }
     }
     new_node->set_inserting(false);
+    free(preds);
+    free(succs);
     //exit quicent state
 }
 
 void Skiplist::restructure(){
-    int i = nlevels - 1;
+    int i = max_level - 1;
     Skiplist_node *pred = head, *h, *cur;
 
     while(i>0){
@@ -177,6 +191,7 @@ void Skiplist::restructure(){
 }
 
 Vertex* Skiplist::extract_min(){
+    printf("extract min\n");
     Skiplist_node *x = head, *newhead = NULL, *obshead = x->get_next_arr()[0], *next, *cur;
     int offset = 0;
     bool d = true;
@@ -206,12 +221,34 @@ Vertex* Skiplist::extract_min(){
     }
     if(__sync_bool_compare_and_swap(&head->get_next_arr()[0], obshead, newhead->get_marked_ptr())){ //maybe need to get marked also obshead?
         restructure();
-        cur = obshead;
+        cur = obshead->get_unmarked_ptr();
         while(cur != newhead){
-            next = cur->get_next_arr()[0];
+            next = cur->get_unmarked_ptr()->get_next_arr()[0];
             destroy_node(cur);
-            cur = next;
+            cur = next->get_unmarked_ptr();
         }
     }
     return v;
+}
+
+void Skiplist::print_skiplist() {
+    printf("\n*****Skip List*****\n"); 
+    for (int i=0;i<=max_level;i++) 
+    { 
+        Skiplist_node *node = head->get_next_arr()[i]; 
+        printf("Level %d: ",i); 
+        // fflush(stdout);
+        while (node != NULL) 
+        { 
+            if(!node->is_deleted()){
+                printf("%d ",node->get_dist());
+                // fflush(stdout); 
+            }
+            node = node->get_unmarked_ptr();
+            node = node->get_next_arr()[i]; 
+        } 
+        printf("\n");
+        fflush(stdout);
+    }
+    printf("********\n");
 }

@@ -82,7 +82,7 @@ void* thread_worker(void* args)
   thread_status[thread_idx] = 1;
 
   while (!Q->finish) {
-    if (is_only_worker(thread_idx, thread_status, Q) && Q->is_empty() && !Q->finish) {  // check if time to terminate
+    if ((is_only_worker(thread_idx, thread_status, Q) && Q->is_empty() && !Q->finish)) {  // check if time to terminate
       Q->finish = 1;
       wake_all_threads(Q->get_sem_mutex(), Q->get_P());
       break;
@@ -141,7 +141,9 @@ void dijkstra(Priority_Queue* Q, Vertex* s, Graph* g)
 
   s->set_dist(0);
   Q->insert(s);
-
+  if(Q->is_empty()){
+    printf("empty\n");
+  }
   init_threads(Q, threads_status_arr, threads_arr);
 
   // pthread join - wait for everyone to finish

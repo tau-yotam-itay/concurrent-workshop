@@ -1,11 +1,13 @@
 #include "sssp.h"
 #include "multiqueue/multi_queue.h"
 #include "skiplist/skiplist.h"
+#include "tests.h"
 //#include "tests.h"
 //#include <iostream>
 
 int main(int argc, const char* argv[])
 {
+  //skiplist_sort_test();
   Graph g(argv[1]);
   printf("done building graph. \n");
   // g.print_graph();

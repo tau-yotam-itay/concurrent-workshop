@@ -56,6 +56,7 @@ public:
     void insert(Vertex* vertex) override;
     Vertex* extract_min() override;
     bool is_empty() override;
+    void print_skiplist();
 };
 
 #endif //CONCURRENT_WORKSHOP_SKIPLIST_H

@@ -7,7 +7,7 @@
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1
 #define RAND_SEED 0
-#define NUM_OF_THREADS 2
+#define NUM_OF_THREADS 10
 
 class Priority_Queue{
 

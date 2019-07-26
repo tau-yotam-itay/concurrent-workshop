@@ -25,7 +25,7 @@ class Vertex
 {
  private:
   int key;
-  unsigned int dist;
+  int dist;
   neighbor* neighbors;
   volatile bool lock;
 
