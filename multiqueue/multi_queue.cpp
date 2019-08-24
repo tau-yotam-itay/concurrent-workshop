@@ -74,8 +74,8 @@ void Multi_Queue::choose_random_heap(Binary_Heap **bh1, Binary_Heap **bh2) {
     int rand_queue_index_1, rand_queue_index_2;
 
     do{
-        rand_queue_index_1 = rand() % (C * P);  // +1 needed?
-        rand_queue_index_2 = rand() % (C * P);  // +1 needed?
+        rand_queue_index_1 = rand() % (C * P);
+        rand_queue_index_2 = rand() % (C * P);
 
     }while(rand_queue_index_1 == rand_queue_index_2);
 

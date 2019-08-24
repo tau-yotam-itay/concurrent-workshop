@@ -6,6 +6,7 @@
 #define MAX_LVL 25
 #define LEVEL_PROB 0.5
 #define BOUND_OFFSET 50
+#define CACHE_PADDING_SKIPLIST 96 //128-sizeof(Skiplist_node)
 
 class Skiplist_node
 {
@@ -15,13 +16,13 @@ private:
     int dist;
     int level;
     bool inserting;
+    char pad[CACHE_PADDING_SKIPLIST];
 
 public:
     Skiplist_node(int level_arg, Vertex* vertex);
     bool is_deleted();
     void set_inserting(bool insert);
     int get_dist();
-    int get_level();
     bool is_inserting();
     Skiplist_node **get_next_arr();
     Vertex *get_vertex();

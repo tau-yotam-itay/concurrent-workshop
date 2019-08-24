@@ -2,10 +2,8 @@
 #define CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
 
 #include "../graph.h"
-//#include <climits>
-//#include <iosfwd>
-//#include <limits>
-//#include <mutex>
+
+#define CACHE_PADDING_BHEAP 88 //128-sizeof(BH_Node)
 
 class BH_Node
 {
@@ -15,6 +13,7 @@ class BH_Node
   BH_Node* parent;
   BH_Node* left;
   BH_Node* right;
+  char pad[CACHE_PADDING_BHEAP];
 
  public:
   BH_Node(Vertex* vertex);

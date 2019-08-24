@@ -3,7 +3,11 @@
 
 #define EMPTY_QUEUE NULL
 
-
+/**
+ *
+ * @param level_arg
+ * @param vertex
+ */
 Skiplist_node::Skiplist_node(int level_arg, Vertex* vertex)
 {
     dist = vertex->get_dist();
@@ -38,10 +42,6 @@ Skiplist_node* Skiplist_node::get_unmarked_ptr() {
 
 int Skiplist_node::get_dist() {
     return dist;
-}
-
-int Skiplist_node::get_level() {
-    return level;
 }
 
 bool Skiplist_node::is_inserting() {
@@ -98,6 +98,7 @@ int Skiplist::random_level() {
 }
 
 
+//destroy using debra
 void Skiplist::destroy_node(Skiplist_node* node){
 
 }
@@ -107,7 +108,7 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
     int i = m - 1;
     Skiplist_node *pred = head, *cur, *del = NULL;
     bool d;
-    // pred = x;    cur = x_next;
+
     while(i >= 0){
         cur = pred->get_next_arr()[i];
         d = cur->is_deleted();
