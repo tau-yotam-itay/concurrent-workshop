@@ -2,6 +2,7 @@
 #define CONCURRENT_WORKSHOP_SKIPLIST_H
 
 #include "../priority_queue.h"
+//#include "../recordmgr/record_manager.h"
 
 #define MAX_LVL 25
 #define LEVEL_PROB 0.5

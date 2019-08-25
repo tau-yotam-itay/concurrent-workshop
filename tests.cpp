@@ -1,64 +1,60 @@
 #include "tests.h"
 using namespace std;
 
-struct Trunk
-{
-    Trunk *prev;
-    string str;
+struct Trunk {
+  Trunk* prev;
+  string str;
 
-    Trunk(Trunk *prev, string str)
-    {
-        this->prev = prev;
-        this->str = str;
-    }
+  Trunk(Trunk* prev, string str)
+  {
+    this->prev = prev;
+    this->str = str;
+  }
 };
 
 // Helper function to print branches of the binary tree
-void showTrunks(Trunk *p)
+void showTrunks(Trunk* p)
 {
-    if (p == nullptr)
-        return;
+  if (p == nullptr)
+    return;
 
-    showTrunks(p->prev);
+  showTrunks(p->prev);
 
-    // cout << p->str;
-    printf("%s",(p->str).c_str());
+  // cout << p->str;
+  printf("%s", (p->str).c_str());
 }
 
 // Recursive function to print binary tree
 // It uses inorder traversal
-void printTree(BH_Node *root, Trunk *prev, bool isLeft)
+void printTree(BH_Node* root, Trunk* prev, bool isLeft)
 {
-    if (root == nullptr)
-        return;
-    
-    string prev_str = "    ";
-    Trunk *trunk = new Trunk(prev, prev_str);
+  if (root == nullptr)
+    return;
 
-    printTree(root->get_left(), trunk, true);
+  string prev_str = "    ";
+  Trunk* trunk = new Trunk(prev, prev_str);
 
-    if (!prev)
-        trunk->str = "---";
-    else if (isLeft)
-    {
-        trunk->str = ".---";
-        prev_str = "   |";
-    }
-    else
-    {
-        trunk->str = "'---";
-        prev->str = prev_str;
-    }
+  printTree(root->get_left(), trunk, true);
 
-    showTrunks(trunk);
-    // cout << root->get_dist() << endl;
-    printf("%d\n",root->get_dist());
+  if (!prev)
+    trunk->str = "---";
+  else if (isLeft) {
+    trunk->str = ".---";
+    prev_str = "   |";
+  } else {
+    trunk->str = "'---";
+    prev->str = prev_str;
+  }
 
-    if (prev)
-        prev->str = prev_str;
-    trunk->str = "   |";
+  showTrunks(trunk);
+  // cout << root->get_dist() << endl;
+  printf("%d\n", root->get_dist());
 
-    printTree(root->get_right(), trunk, false);
+  if (prev)
+    prev->str = prev_str;
+  trunk->str = "   |";
+
+  printTree(root->get_right(), trunk, false);
 }
 
 void print_arr(int* arr, int n)
@@ -82,11 +78,11 @@ void heap_sort_test(int num_of_verticies)
 
   // insert all graph verticies
   for (i = 0; i < num_of_verticies; i++) {
-    Vertex* v = new Vertex(i,num_of_verticies - i);
+    Vertex* v = new Vertex(i, num_of_verticies - i);
     curr_heap_node = new BH_Node(v);
     true_sorted_dist_arr[i] = curr_heap_node->get_dist();
     heap->insert(curr_heap_node);
-    printTree(heap->get_min(),NULL,false);
+    printTree(heap->get_min(), NULL, false);
     // printf("%d ,", num_of_verticies - i);
   }
   /*for (int j = 0; j < i; j++) {
@@ -96,7 +92,7 @@ void heap_sort_test(int num_of_verticies)
   // printf("system sorted arr:\n");
   // print_arr(true_sorted_dist_arr, num_of_verticies);
   // extract min all graph verticies
-  printTree(heap->get_min(),NULL,false);
+  printTree(heap->get_min(), NULL, false);
   i = 0;
   printf("\nheap sorted arr:\n");
   while (heap->get_min() != NULL) {  // while heap is not empty
@@ -104,7 +100,7 @@ void heap_sort_test(int num_of_verticies)
     heap_sorted_dist_arr[i++] = curr_heap_node->get_dist();
     printf("%d, ", heap_sorted_dist_arr[i - 1]);
     fflush(stdout);
-    printTree(heap->get_min(),NULL,false);
+    printTree(heap->get_min(), NULL, false);
   }
   printf("\n");
   // printf("sorted distance array is:\n");
@@ -121,19 +117,20 @@ void heap_sort_test(int num_of_verticies)
   }
 }
 
-void skiplist_sort_test(){
+void skiplist_sort_test()
+{
   Vertex* v;
-  Skiplist* q = new Skiplist(10,0.5,50,2);
-  for(int i=20;i>=0;i--){
-    v = new Vertex(i,i);
+  Skiplist* q = new Skiplist(10, 0.5, 50, 2);
+  for (int i = 20; i >= 0; i--) {
+    v = new Vertex(i, i);
     q->insert(v);
     q->print_skiplist();
   }
-  while(!q->is_empty()){
+  while (!q->is_empty()) {
     v = q->extract_min();
-    if(v)
-      printf("%d\n",v->get_dist());
-      q->print_skiplist();
+    if (v)
+      printf("%d\n", v->get_dist());
+    q->print_skiplist();
   }
   bool a = q->is_empty();
 }

@@ -1,5 +1,4 @@
 #include "sssp.h"
-#define PRINT_INTERVAL 1000
 using namespace std;
 
 typedef struct thread_args {
@@ -8,26 +7,36 @@ typedef struct thread_args {
   int thread_idx;
 } thread_args;
 
+/**
+ * Print all graph vertices distances from source vertex into output file.
+ *
+ * @param g graph
+ */
 void export_distances(Graph* g)
 {
   int dist;
   ofstream outputFile;
   outputFile.open("our_distances");
-  for (int i = 0; i < g->get_verticies_num(); i++) {
+  for (int i = 0; i < g->get_vertices_num(); i++) {
     dist = g->vertices[i]->get_dist();
     outputFile << dist << endl;
-    //printf("%d\n", g->get_vertex(i)->get_dist());
   }
   outputFile.close();
 }
 
+/**
+ *
+ * @param thread_idx id of thread to be checked
+ * @param threads_status all threads status (working-1 ,sleeping-0) array
+ * @param Q Priority Queue
+ * @return true if thread_idx is the single thread currently working.
+ */
 bool is_only_worker(int thread_idx, int* threads_status, Priority_Queue* Q)
 {
   bool locked = false;
-  do{
+  do {
     locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
-  }
-  while(!locked);
+  } while (!locked);
   for (int i = 0; i < Q->get_P(); i++) {
     if (i != thread_idx && threads_status[i] == 1) {
       threads_status[thread_idx] = 0;
@@ -40,6 +49,11 @@ bool is_only_worker(int thread_idx, int* threads_status, Priority_Queue* Q)
   return true;
 }
 
+/**
+ *
+ * @param sem semaphore
+ * @param P total number of threads
+ */
 void wake_all_threads(sem_t* sem, int P)
 {
   for (int i = 0; i < P; i++) {
@@ -47,30 +61,38 @@ void wake_all_threads(sem_t* sem, int P)
   }
 }
 
-void relax(Priority_Queue* Q, int dist, neighbor* n, int*relax_count, int tidx)
+/**
+ * Preform dijkstra relax operation.
+ * If dist has been updated - re insert vertex to the priority queue.
+ *
+ * @param Q Priority Queue
+ * @param dist current distance fron source vertex
+ * @param n neighbors list
+ */
+void relax(Priority_Queue* Q, int dist, neighbor* n)
 {
   bool locked = false;
-  int new_dist = dist + n->weight;    // d' = d(n) + w(v,n)
+  int new_dist = dist + n->weight;  // d' = d(n) + w(v,n)
   Vertex* v = n->v;
-  do{
+  do {
     locked = __sync_bool_compare_and_swap(v->get_lock(), false, true);
-  }while(!locked);
+  } while (!locked);
 
   if (new_dist < n->v->get_dist()) {  // if distance is smaller - relax and add to Q
     n->v->set_dist(new_dist);
-    // print progress of thread
-    *relax_count = *relax_count + 1;
-    // if (*relax_count%PRINT_INTERVAL == 0){
-    //   printf("thread %d: relax operations done: %d\n",tidx,*relax_count);
-    // }
     Q->insert(n->v);
     sem_post(Q->get_sem_mutex());
   }
 
   v->set_lock(false);
-  // maybe if finished node gets better distance then he is re inserted to queue? check this
 }
 
+/**
+ * Independent "work unit" for a thread. Preforms single dijkstra iteration.
+ *
+ * @param args thread arguments
+ * @return NULL
+ */
 void* thread_worker(void* args)
 {
 
@@ -78,7 +100,6 @@ void* thread_worker(void* args)
   Priority_Queue* Q = t_args->Q;
   int* thread_status = t_args->thread_status;
   int thread_idx = t_args->thread_idx;
-  int relax_count = 0;
   thread_status[thread_idx] = 1;
 
   while (!Q->finish) {
@@ -87,20 +108,22 @@ void* thread_worker(void* args)
       wake_all_threads(Q->get_sem_mutex(), Q->get_P());
       break;
     }
-    
+
     sem_wait(Q->get_sem_mutex());
     thread_status[thread_idx] = 1;
     if (Q->finish) {
       break;
     }
     Vertex* min = Q->extract_min();
-    if (!min){ continue; }
+    if (!min) {
+      continue;
+    }
 
     int dist = min->get_dist();
 
     neighbor* n = min->get_neighbors();
     while (n != NULL) {  // iterate all neighbors of min
-      relax(Q, dist, n, &relax_count, thread_idx);
+      relax(Q, dist, n);
       n = n->next;
     }
   }
@@ -109,9 +132,15 @@ void* thread_worker(void* args)
   return NULL;
 }
 
+/**
+ * Initialize and launch all threads
+ *
+ * @param Q Priority Queue
+ * @param threads_status_arr all threads status (working-1 ,sleeping-0) array
+ * @param threads_arr array of all threads
+ */
 void init_threads(Priority_Queue* Q, int* threads_status_arr, pthread_t* threads_arr)
 {
-  // init threads (maybe move to function)
   for (int i = 0; i < Q->get_P(); i++) {
     thread_args* args = (thread_args*)calloc(1, sizeof(thread_args));
     if (!args) {
@@ -129,9 +158,16 @@ void init_threads(Priority_Queue* Q, int* threads_status_arr, pthread_t* threads
   }
 }
 
-void dijkstra(Priority_Queue* Q, Vertex* s, Graph* g)
+/**
+ * A Dijkstra sssp version for relaxed priority queue.
+ * When vertex distane is updated in relax operation - the vertex is
+ * re inserted to the priority queue.
+ *
+ * @param Q Priority Queue
+ * @param s source vertex
+ */
+void dijkstra(Priority_Queue* Q, Vertex* s)
 {
-
   int* threads_status_arr = (int*)calloc(Q->get_P(), sizeof(int));
   pthread_t* threads_arr = (pthread_t*)calloc(Q->get_P(), sizeof(pthread_t));
   if (threads_arr == NULL || threads_status_arr == NULL) {
@@ -141,7 +177,7 @@ void dijkstra(Priority_Queue* Q, Vertex* s, Graph* g)
 
   s->set_dist(0);
   Q->insert(s);
-  if(Q->is_empty()){
+  if (Q->is_empty()) {
     printf("empty\n");
   }
   init_threads(Q, threads_status_arr, threads_arr);
