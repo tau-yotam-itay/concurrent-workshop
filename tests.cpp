@@ -124,13 +124,13 @@ void skiplist_sort_test()
   for (int i = 20; i >= 0; i--) {
     v = new Vertex(i, i);
     q->insert(v);
-    q->print_skiplist();
+    //q->print_skiplist();
   }
   while (!q->is_empty()) {
     v = q->extract_min();
     if (v)
       printf("%d\n", v->get_dist());
-    q->print_skiplist();
+    //q->print_skiplist();
   }
   bool a = q->is_empty();
 }

@@ -54,7 +54,6 @@ volatile bool* Binary_Heap::get_lock() { return &lock; }
 void Binary_Heap::set_lock(bool b){ lock = b;}
 
 /**
- *
  * @return pointer to the postorder closest successor of binary heap node
  */
 BH_Node* BH_Node::successor()
@@ -82,7 +81,6 @@ BH_Node* BH_Node::successor()
 }
 
 /**
- *
  * @return pointer to the postorder closest predecessor of binary heap node
  */
 BH_Node* BH_Node::predecessor()
@@ -106,7 +104,6 @@ BH_Node* BH_Node::predecessor()
 }
 
 /**
- *
  * @param curr_node
  * @return pointer to the leftmost successor of curr_node
  */
@@ -122,7 +119,6 @@ BH_Node* BH_Node::go_leftmost(BH_Node* curr_node)
 }
 
 /**
- *
  * @param curr_node
  * @return pointer to the rightmost successor of curr_node
  */
@@ -139,7 +135,6 @@ BH_Node* BH_Node::go_rightmost(BH_Node* curr_node)
 
 /**
  * Swap places between two nodes in the heap (Nodes data is being swapped and not the actual nodes).
- *
  * @param child
  * @param parent
  */
@@ -157,7 +152,6 @@ void Binary_Heap::swap(BH_Node* child, BH_Node* parent)
 
 /**
  * Choose next node to swap places within the binary heap, according to heap rules
- *
  * @param parent node needed to be swapped
  * @param chosen_node right or left child of the parent to be swapped, chosen according to heap rules
  */
@@ -182,7 +176,6 @@ void Binary_Heap::choose_swap(BH_Node* parent, BH_Node** chosen_node){
 
 /**
  * Correct the position of the newly inserted node.
- *
  * @param node inserted node
  */
 void Binary_Heap::heapify_up(BH_Node* node)
@@ -199,7 +192,6 @@ void Binary_Heap::heapify_up(BH_Node* node)
 
 /**
  * Correct the position of the root after executing extract min operation
- *
  * @param node node to be heapified down.
  */
 void Binary_Heap::heapify_down(BH_Node* node)
@@ -224,7 +216,6 @@ Binary_Heap::Binary_Heap()
 
 /**
  * Insert a new node to the binary heap.
- *
  * @param node new node to be inserted to the heap
  */
 void Binary_Heap::insert(BH_Node* node)
@@ -247,7 +238,6 @@ void Binary_Heap::insert(BH_Node* node)
 
 /**
  * Disconnect node from heap structure.
- *
  * @param node to be removed from the heap structure.
  */
 void Binary_Heap::disconnect_node(BH_Node* node)
@@ -266,7 +256,6 @@ void Binary_Heap::disconnect_node(BH_Node* node)
 
 /**
  * Extract node with minimum value, and apply methods to preserve heap constrains.
- *
  * @return pointer to BH_Node with minimum value.
  */
 BH_Node* Binary_Heap::extract_min()

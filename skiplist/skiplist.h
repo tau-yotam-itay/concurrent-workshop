@@ -41,7 +41,6 @@ private:
     int max_level;
     int bound_offset;
     float next_level_prob;
-    int nlevels; //higest level chosen so far
     Skiplist_node *head;
     Skiplist_node *tail;
 
@@ -54,7 +53,6 @@ private:
 
 public:
     Skiplist(int max_lvl, float prob, int offset, int p);
-
     void insert(Vertex* vertex) override;
     Vertex* extract_min() override;
     bool is_empty() override;

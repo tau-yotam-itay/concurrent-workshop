@@ -2,7 +2,6 @@
 
 /**
  * Priority_Queue constructor
- *
  * @param p total number of threads
  */
 Priority_Queue::Priority_Queue(int p)
@@ -14,7 +13,6 @@ Priority_Queue::Priority_Queue(int p)
 }
 
 /**
- *
  * @return pointer to semaphore mutex
  */
 sem_t* Priority_Queue::get_sem_mutex() { return &sem_mutex; }
@@ -27,13 +25,11 @@ volatile bool* Priority_Queue::get_all_sleep_lock() { return &all_sleep_lock; }
 
 /**
  * Set lock indicator (true iff all threads are in sleeping state)
- *
  * @param b boolean value to be set
  */
 void Priority_Queue::set_all_sleep_lock(bool b) { all_sleep_lock = b; }
 
 /**
- *
  * @return P - total number of threads
  */
 int Priority_Queue::get_P() { return P; }

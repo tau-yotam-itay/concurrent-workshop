@@ -9,7 +9,6 @@ typedef struct thread_args {
 
 /**
  * Print all graph vertices distances from source vertex into output file.
- *
  * @param g graph
  */
 void export_distances(Graph* g)
@@ -25,7 +24,6 @@ void export_distances(Graph* g)
 }
 
 /**
- *
  * @param thread_idx id of thread to be checked
  * @param threads_status all threads status (working-1 ,sleeping-0) array
  * @param Q Priority Queue
@@ -50,7 +48,6 @@ bool is_only_worker(int thread_idx, int* threads_status, Priority_Queue* Q)
 }
 
 /**
- *
  * @param sem semaphore
  * @param P total number of threads
  */
@@ -64,7 +61,6 @@ void wake_all_threads(sem_t* sem, int P)
 /**
  * Preform dijkstra relax operation.
  * If dist has been updated - re insert vertex to the priority queue.
- *
  * @param Q Priority Queue
  * @param dist current distance fron source vertex
  * @param n neighbors list
@@ -89,13 +85,11 @@ void relax(Priority_Queue* Q, int dist, neighbor* n)
 
 /**
  * Independent "work unit" for a thread. Preforms single dijkstra iteration.
- *
  * @param args thread arguments
  * @return NULL
  */
 void* thread_worker(void* args)
 {
-
   thread_args* t_args = (thread_args*)args;
   Priority_Queue* Q = t_args->Q;
   int* thread_status = t_args->thread_status;
@@ -134,7 +128,6 @@ void* thread_worker(void* args)
 
 /**
  * Initialize and launch all threads
- *
  * @param Q Priority Queue
  * @param threads_status_arr all threads status (working-1 ,sleeping-0) array
  * @param threads_arr array of all threads
@@ -162,7 +155,6 @@ void init_threads(Priority_Queue* Q, int* threads_status_arr, pthread_t* threads
  * A Dijkstra sssp version for relaxed priority queue.
  * When vertex distane is updated in relax operation - the vertex is
  * re inserted to the priority queue.
- *
  * @param Q Priority Queue
  * @param s source vertex
  */

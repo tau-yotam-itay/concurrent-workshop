@@ -4,8 +4,8 @@
 #define EMPTY_QUEUE NULL
 
 /**
- *
- * @param level_arg
+ * Skiplist_node constructor
+ * @param level_arg the node's level in the skiplist
  * @param vertex
  */
 Skiplist_node::Skiplist_node(int level_arg, Vertex* vertex)
@@ -18,13 +18,20 @@ Skiplist_node::Skiplist_node(int level_arg, Vertex* vertex)
     inserting = false;
 };
 
-
+/**
+ * Create new Skiplist_node using debra.
+ * @param level_arg the node's level in the skiplist
+ * @param vertex
+ * @return pointer to the newly created node
+ */
 Skiplist_node* Skiplist::create_node(int level_arg, Vertex* vertex){
     return new Skiplist_node(level_arg, vertex);
     //switch with debra
 }
 
-
+/**
+ * @return true iff node is logically deleted
+ */
 bool Skiplist_node::is_deleted() {
     if(((uintptr_t)(this)) & 1){
         return true;
@@ -32,51 +39,61 @@ bool Skiplist_node::is_deleted() {
     return false;
 }
 
+/**
+ * mark node as logically deleted
+ * @return pointer to the 'deleted' node
+ */
 Skiplist_node* Skiplist_node::get_marked_ptr() {
     return (Skiplist_node *)(((uintptr_t)(this)) | 1);
 }
 
+/**
+ * unmark node from being logically deleted
+ * @return pointer to the 'undeleted' node
+ */
 Skiplist_node* Skiplist_node::get_unmarked_ptr() {
     return (Skiplist_node *)(((uintptr_t)(this)) & ~1);
 }
 
+/**
+ * @return node's vertex's distance from source vertex
+ */
 int Skiplist_node::get_dist() {
     return dist;
 }
 
+/**
+ * @return true iff node is being in an insertion process to the skiplist data structure
+ */
 bool Skiplist_node::is_inserting() {
     return inserting;
 }
 
-Skiplist_node **Skiplist_node::get_next_arr() {
-    return next_arr;
-}
-
-Vertex *Skiplist_node::get_vertex() {
-    return v;
-}
-
+/**
+ * Set 'inserting' field according to the param.
+ * @param insert true iff node is being in an insertion process to the skiplist data structure
+ */
 void Skiplist_node::set_inserting(bool insert) {
     inserting = insert;
 }
 
+/**
+ * @return pointer to next pointed node's array (levels array)
+ */
+Skiplist_node **Skiplist_node::get_next_arr() {
+    return next_arr;
+}
 
-Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(p)
-{
-    max_level = max_lvl;
-    next_level_prob = prob;
-    bound_offset = offset;
-    nlevels = 1;
+/**
+ * @return node's vertex field
+ */
+Vertex *Skiplist_node::get_vertex() {
+    return v;
+}
 
-    Vertex* head_v = new Vertex(INT_MIN, INT_MIN);
-    Vertex* tail_v = new Vertex(INT_MAX, INT_MAX);
-    head = new Skiplist_node(max_lvl, head_v);
-    tail = new Skiplist_node(max_lvl, tail_v);
-    for(int i = 0; i < max_lvl; i++){
-        head->get_next_arr()[i] = tail;
-    }
-};
-
+/**
+ * @return true iff skiplist data structure is empty
+ */
 bool Skiplist::is_empty(){
     Skiplist_node* node = head->get_next_arr()[0];
     while(node->is_deleted()){
@@ -85,7 +102,11 @@ bool Skiplist::is_empty(){
     return node == tail;
 }
 
-//credit: geeksforgeeks.com
+/**
+ * Randomize maximum level for a specific node in skiplist
+ * @return randomized level
+ * credit: geeksforgeeks.com
+ */
 int Skiplist::random_level() {
     float r = (float)rand()/RAND_MAX;
     int lvl = 0;
@@ -97,12 +118,43 @@ int Skiplist::random_level() {
     return lvl;
 }
 
-
-//destroy using debra
+/**
+ * Free node's used memory space using debra
+ * @param node destroyed node
+ */
 void Skiplist::destroy_node(Skiplist_node* node){
 
 }
 
+/**
+ * Skiplist constructor
+ * @param max_lvl maximum level - maximum size of skiplist node array
+ * @param prob probability of a node to be at next level given it's current maximal level
+ * @param offset
+ * @param p total number of threads
+ */
+Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(p)
+{
+    max_level = max_lvl;
+    next_level_prob = prob;
+    bound_offset = offset;
+
+    Vertex* head_v = new Vertex(INT_MIN, INT_MIN);
+    Vertex* tail_v = new Vertex(INT_MAX, INT_MAX);
+    head = new Skiplist_node(max_lvl, head_v);
+    tail = new Skiplist_node(max_lvl, tail_v);
+    for(int i = 0; i < max_lvl; i++){
+        head->get_next_arr()[i] = tail;
+    }
+}
+
+/**
+ * Locates the predecessors and successors of a new node that is to be inserted
+ * @param dist
+ * @param preds
+ * @param succs
+ * @return pointer to the last (at the moment of traversal) deleted node of the deleted prefix
+ */
 Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_node** succs){
     int m = max_level;
     int i = m - 1;
@@ -130,10 +182,13 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
     return del;
 }
 
+/**
+ * Insert new node to Skiplist data structure
+ * @param vertex node's vertex field
+ */
 void Skiplist::insert(Vertex* vertex){
     //enter quicent state
     int height = random_level(), i = 1;
-    // printf("insert, height= %d\n",height);
     Skiplist_node* new_node = create_node(height, vertex);
     Skiplist_node* del_node = NULL;
     Skiplist_node **preds = (Skiplist_node**)calloc(max_level,sizeof(Skiplist_node*));
@@ -170,6 +225,9 @@ void Skiplist::insert(Vertex* vertex){
     //exit quicent state
 }
 
+/**
+ * Updates the pointers of q.head, except for level 0, starting from the highest level.
+ */
 void Skiplist::restructure(){
     int i = max_level - 1;
     Skiplist_node *pred = head, *h, *cur;
@@ -191,8 +249,12 @@ void Skiplist::restructure(){
     }
 }
 
+/**
+ * Extract the minimal node from skiplist data structure
+ * (minimal distance of a node to the source vertex)
+ * @return pointer to the Vertex field of the minimal node
+ */
 Vertex* Skiplist::extract_min(){
-    // printf("extract min\n");
     Skiplist_node *x = head, *newhead = NULL, *obshead = x->get_next_arr()[0], *next, *cur;
     int offset = 0;
     bool d = true;
@@ -200,7 +262,6 @@ Vertex* Skiplist::extract_min(){
 
     do{
         next = x->get_next_arr()[0];
-        //d = next->is_deleted(); //need this line?
         if(next->get_unmarked_ptr() == tail){
             return EMPTY_QUEUE;
         }
@@ -232,6 +293,7 @@ Vertex* Skiplist::extract_min(){
     return v;
 }
 
+/*
 void Skiplist::print_skiplist() {
     printf("\n*****Skip List*****\n"); 
     for (int i=0;i<=max_level;i++) 
@@ -252,4 +314,4 @@ void Skiplist::print_skiplist() {
         fflush(stdout);
     }
     printf("********\n");
-}
+}*/

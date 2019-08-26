@@ -1,6 +1,12 @@
 #include "multi_queue.h"
 //#include "../recordmgr/record_manager.h"
 
+
+/**
+ * Multi Queue constructor
+ * @param c some constant to be multiplied by total number of threads (p) to define the total number of heaps (cp)
+ * @param p total number of threads
+ */
 Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
 {
     C = c;
@@ -11,6 +17,10 @@ Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
     }
 }
 
+/**
+ * @param v node's vertex
+ * @return pointer to new BH_Node
+ */
 BH_Node* Multi_Queue::create_node(Vertex* v)
 {
     //debra enters here
@@ -18,18 +28,25 @@ BH_Node* Multi_Queue::create_node(Vertex* v)
     return node;
 }
 
-// free node using debra
+/**
+ * Free node's used memory using debra
+ * @param node node to be destroyed
+ */
 void Multi_Queue::destroy_node(BH_Node* node) {
     //delete node;
 }
 
+/**
+ * Insert new node to the Multi_Queue priority queue
+ * @param vertex
+ */
 void Multi_Queue::insert(Vertex* vertex)
 {
     // enter debra quiscent state
     volatile bool thrnd_won = false;
     int rand_queue_index;
     do {
-        rand_queue_index = rand() % (C * P);                                                             // +1 needed?
+        rand_queue_index = rand() % (C * P);
         thrnd_won = __sync_bool_compare_and_swap(queues_array[rand_queue_index]->get_lock(), false, true);  // Compare and swap
     } while (!thrnd_won);
     BH_Node* to_insert_node = create_node(vertex);
@@ -38,6 +55,9 @@ void Multi_Queue::insert(Vertex* vertex)
     // exit debra quiscent state
 }
 
+/**
+ * Extract node with minimal value (minimum distance of vertex from source) from Multi_Queue
+ */
 Vertex* Multi_Queue::extract_min()
 {
     // enter debra quiscent state
@@ -59,7 +79,9 @@ Vertex* Multi_Queue::extract_min()
     return ret;
 }
 
-// returns true if all binary heaps are empty
+/**
+ * @return true iff all binary heaps are empty
+ */
 bool Multi_Queue::is_empty()
 {
     for (int i = 0; i < C * P; i++) {
@@ -70,6 +92,12 @@ bool Multi_Queue::is_empty()
     return true;
 }
 
+
+/**
+ * Randomize two valid different heap indexes
+ * @param bh1 pointer to first randomized heap
+ * @param bh2 pointer to seconed randomized heap
+ */
 void Multi_Queue::choose_random_heap(Binary_Heap **bh1, Binary_Heap **bh2) {
     int rand_queue_index_1, rand_queue_index_2;
 
@@ -82,7 +110,15 @@ void Multi_Queue::choose_random_heap(Binary_Heap **bh1, Binary_Heap **bh2) {
     *bh1 = queues_array[rand_queue_index_1];
     *bh2 = queues_array[rand_queue_index_2];
 }
-bool Multi_Queue::try_lock_heaps(Binary_Heap* bh1, Binary_Heap* bh2) {
+
+/**
+ * Try to lock previously randomized heaps using __sync_bool_compare_and_swap
+ * If lock is unsuccessful for one of the heaps - release the other heap's lock
+ * @param bh1 first heap
+ * @param bh2 second heap
+ * @return true if both heaps are successfully lockes, otherwise - false
+ */
+bool Multi_Queue::try_lock_heaps(Binary_Heap* bh1, Binary_Heap* bh2){
     bool is_locked_queue1 = false, is_locked_queue2 = false;
 
     is_locked_queue1 = __sync_bool_compare_and_swap(bh1->get_lock(), false, true);
@@ -101,6 +137,12 @@ bool Multi_Queue::try_lock_heaps(Binary_Heap* bh1, Binary_Heap* bh2) {
     return true;
 }
 
+/**
+ * Choose one of two heaps by the heap which has node with minimal value of both.
+ * @param bh1 first heap
+ * @param bh2 second heap
+ * @param chosen_heap pointer to the selected heap's pointer
+ */
 void Multi_Queue::choose_one_heap(Binary_Heap* bh1, Binary_Heap* bh2, Binary_Heap** chosen_heap){
     bool both_empty;
 

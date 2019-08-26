@@ -5,7 +5,6 @@ using namespace std;
 
 /**
  * Vertex constructor
- *
  * @param k key(id) of vertex
  */
 Vertex::Vertex(int k)
@@ -17,7 +16,6 @@ Vertex::Vertex(int k)
 
 /**
  * Vertex constructor (with initialization to dist)
- *
  * @param k key(id) of vertex
  * @param new_dist distance from source
  */
@@ -37,14 +35,12 @@ int Vertex::get_dist() { return dist; }
 
 /**
  * Set new distance from source
- *
  * @param d new distance from source vertex
  */
 void Vertex::set_dist(int d) { dist = d; }
 
 /**
  * Add new vertex to neigbor list.
- *
  * @param v vertex to be added
  * @param weight edge (curr,v) weight
  */
@@ -58,27 +54,23 @@ void Vertex::add_neighbor(Vertex* v, int weight)
 }
 
 /**
- *
  * @return neighbors list
  */
 neighbor* Vertex::get_neighbors() { return neighbors; }
 
 /**
- *
  * @return pointer to current vertex lock
  */
 volatile bool* Vertex::get_lock() { return &lock; }
 
 /**
  * Set vertex lock to value b
- *
  * @param b new lock value
  */
 void Vertex::set_lock(bool b) { lock = b; }
 
 /**
  * Add new edge to graph
- *
  * @param key1 vertex 1 key
  * @param key2 vertex 1 key
  * @param weight weight of edge (key1,key1)
@@ -101,7 +93,6 @@ void Graph::add_edge(int key1, int key2, int weight)
 
 /**
  * Graph constructor
- *
  * @param filepath path to graph edges txt file
  */
 Graph::Graph(const char* filepath)
@@ -131,13 +122,11 @@ Graph::Graph(const char* filepath)
 }
 
 /**
- *
  * @return pointer to source vertex
  */
 Vertex* Graph::get_source() { return vertices[source_vertex_key]; }
 
 /**
- *
  * @return total number of vertices in graph
  */
 int Graph::get_vertices_num() { return number_of_vertices; }

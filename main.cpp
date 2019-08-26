@@ -1,6 +1,6 @@
-#include "multiqueue/multi_queue.h"
 #include "sssp.h"
-//#include "skiplist/skiplist.h"
+//#include "multiqueue/multi_queue.h"
+#include "skiplist/skiplist.h"
 #include "tests.h"
 #include <chrono>
 
@@ -14,8 +14,8 @@ int main(int argc, const char* argv[])
   srand(RAND_SEED);
 
   // Create priority queue
-  Priority_Queue* Q = new Multi_Queue(C_CONSTANT, NUM_OF_THREADS);
-  // Priority_Queue* Q = new Skiplist(MAX_LVL, LEVEL_PROB, BOUND_OFFSET, NUM_OF_THREADS);
+  //Priority_Queue* Q = new Multi_Queue(C_CONSTANT, NUM_OF_THREADS);
+  Priority_Queue* Q = new Skiplist(MAX_LVL, LEVEL_PROB, BOUND_OFFSET, NUM_OF_THREADS);
 
   // Start timer
   auto start = std::chrono::high_resolution_clock::now();
