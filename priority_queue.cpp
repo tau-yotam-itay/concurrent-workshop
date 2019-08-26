@@ -18,7 +18,6 @@ Priority_Queue::Priority_Queue(int p)
 sem_t* Priority_Queue::get_sem_mutex() { return &sem_mutex; }
 
 /**
- *
  * @return pointer to lock indicator (true iff all threads are in sleeping state)
  */
 volatile bool* Priority_Queue::get_all_sleep_lock() { return &all_sleep_lock; }

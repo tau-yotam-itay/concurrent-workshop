@@ -24,41 +24,6 @@ void export_distances(Graph* g)
 }
 
 /**
- * @param thread_idx id of thread to be checked
- * @param threads_status all threads status (working-1 ,sleeping-0) array
- * @param Q Priority Queue
- * @return true if thread_idx is the single thread currently working.
- */
-bool is_only_worker(int thread_idx, int* threads_status, Priority_Queue* Q)
-{
-  bool locked = false;
-  do {
-    locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
-  } while (!locked);
-  for (int i = 0; i < Q->get_P(); i++) {
-    if (i != thread_idx && threads_status[i] == 1) {
-      threads_status[thread_idx] = 0;
-      Q->set_all_sleep_lock(false);
-      return false;
-    }
-  }
-  threads_status[thread_idx] = 0;
-  Q->set_all_sleep_lock(false);
-  return true;
-}
-
-/**
- * @param sem semaphore
- * @param P total number of threads
- */
-void wake_all_threads(sem_t* sem, int P)
-{
-  for (int i = 0; i < P; i++) {
-    sem_post(sem);
-  }
-}
-
-/**
  * Preform dijkstra relax operation.
  * If dist has been updated - re insert vertex to the priority queue.
  * @param Q Priority Queue
@@ -81,6 +46,41 @@ void relax(Priority_Queue* Q, int dist, neighbor* n)
   }
 
   v->set_lock(false);
+}
+
+/**
+ * @param sem semaphore
+ * @param P total number of threads
+ */
+void wake_all_threads(sem_t* sem, int P)
+{
+    for (int i = 0; i < P; i++) {
+        sem_post(sem);
+    }
+}
+
+/**
+ * @param thread_idx id of thread to be checked
+ * @param threads_status all threads status (working-1 ,sleeping-0) array
+ * @param Q Priority Queue
+ * @return true if thread_idx is the single thread currently working.
+ */
+bool is_only_worker(int thread_idx, int* threads_status, Priority_Queue* Q)
+{
+    bool locked = false;
+    do {
+        locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
+    } while (!locked);
+    for (int i = 0; i < Q->get_P(); i++) {
+        if (i != thread_idx && threads_status[i] == 1) {
+            threads_status[thread_idx] = 0;
+            Q->set_all_sleep_lock(false);
+            return false;
+        }
+    }
+    threads_status[thread_idx] = 0;
+    Q->set_all_sleep_lock(false);
+    return true;
 }
 
 /**

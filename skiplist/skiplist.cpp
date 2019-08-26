@@ -40,6 +40,13 @@ bool Skiplist_node::is_deleted() {
 }
 
 /**
+ * @return true iff node is being in an insertion process to the skiplist data structure
+ */
+bool Skiplist_node::is_inserting() {
+    return inserting;
+}
+
+/**
  * mark node as logically deleted
  * @return pointer to the 'deleted' node
  */
@@ -53,28 +60,6 @@ Skiplist_node* Skiplist_node::get_marked_ptr() {
  */
 Skiplist_node* Skiplist_node::get_unmarked_ptr() {
     return (Skiplist_node *)(((uintptr_t)(this)) & ~1);
-}
-
-/**
- * @return node's vertex's distance from source vertex
- */
-int Skiplist_node::get_dist() {
-    return dist;
-}
-
-/**
- * @return true iff node is being in an insertion process to the skiplist data structure
- */
-bool Skiplist_node::is_inserting() {
-    return inserting;
-}
-
-/**
- * Set 'inserting' field according to the param.
- * @param insert true iff node is being in an insertion process to the skiplist data structure
- */
-void Skiplist_node::set_inserting(bool insert) {
-    inserting = insert;
 }
 
 /**
@@ -92,38 +77,18 @@ Vertex *Skiplist_node::get_vertex() {
 }
 
 /**
- * @return true iff skiplist data structure is empty
+ * @return node's vertex's distance from source vertex
  */
-bool Skiplist::is_empty(){
-    Skiplist_node* node = head->get_next_arr()[0];
-    while(node->is_deleted()){
-        node = node->get_unmarked_ptr()->get_next_arr()[0];
-    }
-    return node == tail;
+int Skiplist_node::get_dist() {
+    return dist;
 }
 
 /**
- * Randomize maximum level for a specific node in skiplist
- * @return randomized level
- * credit: geeksforgeeks.com
+ * Set 'inserting' field according to the param.
+ * @param insert true iff node is being in an insertion process to the skiplist data structure
  */
-int Skiplist::random_level() {
-    float r = (float)rand()/RAND_MAX;
-    int lvl = 0;
-    while (r < next_level_prob && lvl < max_level)
-    {
-        lvl++;
-        r = (float)rand()/RAND_MAX;
-    }
-    return lvl;
-}
-
-/**
- * Free node's used memory space using debra
- * @param node destroyed node
- */
-void Skiplist::destroy_node(Skiplist_node* node){
-
+void Skiplist_node::set_inserting(bool insert) {
+    inserting = insert;
 }
 
 /**
@@ -146,6 +111,41 @@ Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(
     for(int i = 0; i < max_lvl; i++){
         head->get_next_arr()[i] = tail;
     }
+}
+
+/**
+ * Free node's used memory space using debra
+ * @param node destroyed node
+ */
+void Skiplist::destroy_node(Skiplist_node* node){
+
+}
+
+/**
+ * Randomize maximum level for a specific node in skiplist
+ * @return randomized level
+ * credit: geeksforgeeks.com
+ */
+int Skiplist::random_level() {
+    float r = (float)rand()/RAND_MAX;
+    int lvl = 0;
+    while (r < next_level_prob && lvl < max_level)
+    {
+        lvl++;
+        r = (float)rand()/RAND_MAX;
+    }
+    return lvl;
+}
+
+/**
+ * @return true iff skiplist data structure is empty
+ */
+bool Skiplist::is_empty(){
+    Skiplist_node* node = head->get_next_arr()[0];
+    while(node->is_deleted()){
+        node = node->get_unmarked_ptr()->get_next_arr()[0];
+    }
+    return node == tail;
 }
 
 /**
@@ -292,26 +292,3 @@ Vertex* Skiplist::extract_min(){
     }
     return v;
 }
-
-/*
-void Skiplist::print_skiplist() {
-    printf("\n*****Skip List*****\n"); 
-    for (int i=0;i<=max_level;i++) 
-    { 
-        Skiplist_node *node = head->get_next_arr()[i]; 
-        printf("Level %d: ",i); 
-        // fflush(stdout);
-        while (node != NULL) 
-        { 
-            if(!node->is_deleted()){
-                printf("%d ",node->get_dist());
-                // fflush(stdout); 
-            }
-            node = node->get_unmarked_ptr();
-            node = node->get_next_arr()[i]; 
-        } 
-        printf("\n");
-        fflush(stdout);
-    }
-    printf("********\n");
-}*/

@@ -22,15 +22,14 @@ private:
 public:
     Skiplist_node(int level_arg, Vertex* vertex);
     bool is_deleted();
-    void set_inserting(bool insert);
-    int get_dist();
     bool is_inserting();
-    Skiplist_node **get_next_arr();
-    Vertex *get_vertex();
     Skiplist_node* get_marked_ptr();
     Skiplist_node* get_unmarked_ptr();
+    Skiplist_node **get_next_arr();
+    Vertex *get_vertex();
+    int get_dist();
+    void set_inserting(bool insert);
 };
-
 
 
 class Skiplist: public Priority_Queue
@@ -53,10 +52,9 @@ private:
 
 public:
     Skiplist(int max_lvl, float prob, int offset, int p);
+    bool is_empty() override;
     void insert(Vertex* vertex) override;
     Vertex* extract_min() override;
-    bool is_empty() override;
-    void print_skiplist();
 };
 
 #endif //CONCURRENT_WORKSHOP_SKIPLIST_H

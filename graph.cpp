@@ -28,7 +28,6 @@ Vertex::Vertex(int k, int new_dist)
 }
 
 /**
- *
  * @return distance of current vertex from source vertex
  */
 int Vertex::get_dist() { return dist; }
@@ -70,28 +69,6 @@ volatile bool* Vertex::get_lock() { return &lock; }
 void Vertex::set_lock(bool b) { lock = b; }
 
 /**
- * Add new edge to graph
- * @param key1 vertex 1 key
- * @param key2 vertex 1 key
- * @param weight weight of edge (key1,key1)
- */
-void Graph::add_edge(int key1, int key2, int weight)
-{
-  Vertex* v1 = vertices[key1];
-  Vertex* v2 = vertices[key2];
-  if (!v1) {
-    v1 = new Vertex(key1);
-    vertices[key1] = v1;
-  }
-  if (!v2) {
-    v2 = new Vertex(key2);
-    vertices[key2] = v2;
-  }
-  v1->add_neighbor(v2, weight);
-  v2->add_neighbor(v1, weight);
-}
-
-/**
  * Graph constructor
  * @param filepath path to graph edges txt file
  */
@@ -119,6 +96,28 @@ Graph::Graph(const char* filepath)
       printf("added %d edges to the graph. \n", c);
     }
   }
+}
+
+/**
+ * Add new edge to graph
+ * @param key1 vertex 1 key
+ * @param key2 vertex 1 key
+ * @param weight weight of edge (key1,key1)
+ */
+void Graph::add_edge(int key1, int key2, int weight)
+{
+    Vertex* v1 = vertices[key1];
+    Vertex* v2 = vertices[key2];
+    if (!v1) {
+        v1 = new Vertex(key1);
+        vertices[key1] = v1;
+    }
+    if (!v2) {
+        v2 = new Vertex(key2);
+        vertices[key2] = v2;
+    }
+    v1->add_neighbor(v2, weight);
+    v2->add_neighbor(v1, weight);
 }
 
 /**

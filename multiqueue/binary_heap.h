@@ -17,7 +17,7 @@ class BH_Node
 
  public:
   BH_Node(Vertex* vertex);
-  BH_Node(Vertex* vertex, int distance);
+  BH_Node(Vertex* vertex, int distance); //delete?
   int get_dist();
   Vertex* get_vertex();
   BH_Node* get_parent();
@@ -28,8 +28,6 @@ class BH_Node
   void set_right(BH_Node* node);
   void set_vertex(Vertex* vertex);
   void set_dist(int d);
-  BH_Node* successor();
-  BH_Node* predecessor();
   bool is_leaf();
   bool is_root();
   bool is_right_child();
@@ -38,6 +36,8 @@ class BH_Node
   bool has_left();
   BH_Node* go_leftmost(BH_Node* pNode);
   BH_Node* go_rightmost(BH_Node* pNode);
+  BH_Node* successor();
+  BH_Node* predecessor();
 };
 
 class Binary_Heap
@@ -45,25 +45,24 @@ class Binary_Heap
  private:
   BH_Node* min_node;
   BH_Node* last_node;
-  // value swap - make sure it doesnt cause external pointers problems
-  void swap_left(BH_Node* child, BH_Node* parent);
-  void swap_right(BH_Node* child, BH_Node* parent);
-  void swap_relatives(BH_Node* child, BH_Node* parent);
+  volatile bool lock;
+
   void swap(BH_Node* child, BH_Node* parent);
   void choose_swap(BH_Node* parent, BH_Node** chosen_node);
   void heapify_up(BH_Node* node);
   void heapify_down(BH_Node* node);
-  volatile bool lock;
 
  public:
   Binary_Heap();
+  bool is_empty();
+  BH_Node* get_min();
+  volatile bool* get_lock();
+  void set_lock(bool b);
   void insert(BH_Node* node);
   void disconnect_node(BH_Node* node);
   BH_Node* extract_min();
-  BH_Node* get_min();
-  bool is_empty();
-  volatile bool* get_lock();
-  void set_lock(bool b);
+
+
 };
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H
