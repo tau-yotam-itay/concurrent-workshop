@@ -37,17 +37,17 @@ Vertex* BH_Node::get_vertex() { return v; }
 BH_Node* BH_Node::get_parent() { return parent; }
 BH_Node* BH_Node::get_left() { return left; }
 BH_Node* BH_Node::get_right() { return right; }
+void BH_Node::set_dist(int d) { dist = d; }
+void BH_Node::set_vertex(Vertex* vertex) { v = vertex; }
 void BH_Node::set_parent(BH_Node* node) { parent = node; }
 void BH_Node::set_left(BH_Node* node) { left = node; }
 void BH_Node::set_right(BH_Node* node) { right = node; }
-void BH_Node::set_vertex(Vertex* vertex) { v = vertex; }
-void BH_Node::set_dist(int d) { dist = d; }
 bool BH_Node::is_leaf() { return (!left && !right); }
 bool BH_Node::is_root() { return this->parent == NULL; }
-bool BH_Node::is_right_child() { return !this->is_root() && this->parent->right == this; }
 bool BH_Node::is_left_child() { return !this->is_root() && this->parent->left == this; }
-bool BH_Node::has_right() { return this->right != NULL; }
+bool BH_Node::is_right_child() { return !this->is_root() && this->parent->right == this; }
 bool BH_Node::has_left() { return this->left != NULL; }
+bool BH_Node::has_right() { return this->right != NULL; }
 
 /**
  * @param curr_node

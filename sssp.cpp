@@ -8,7 +8,7 @@ typedef struct thread_args {
 } thread_args;
 
 /**
- * Print all graph vertices distances from source vertex into output file.
+ * Print all graph vertices distances from source vertex into an output file.
  * @param g graph
  */
 void export_distances(Graph* g)

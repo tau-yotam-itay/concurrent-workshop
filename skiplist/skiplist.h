@@ -23,12 +23,12 @@ public:
     Skiplist_node(int level_arg, Vertex* vertex);
     bool is_deleted();
     bool is_inserting();
+    void set_inserting(bool insert);
     Skiplist_node* get_marked_ptr();
     Skiplist_node* get_unmarked_ptr();
     Skiplist_node **get_next_arr();
     Vertex *get_vertex();
     int get_dist();
-    void set_inserting(bool insert);
 };
 
 

@@ -47,6 +47,14 @@ bool Skiplist_node::is_inserting() {
 }
 
 /**
+ * Set 'inserting' field according to the param.
+ * @param insert true iff node is being in an insertion process to the skiplist data structure
+ */
+void Skiplist_node::set_inserting(bool insert) {
+    inserting = insert;
+}
+
+/**
  * mark node as logically deleted
  * @return pointer to the 'deleted' node
  */
@@ -84,14 +92,6 @@ int Skiplist_node::get_dist() {
 }
 
 /**
- * Set 'inserting' field according to the param.
- * @param insert true iff node is being in an insertion process to the skiplist data structure
- */
-void Skiplist_node::set_inserting(bool insert) {
-    inserting = insert;
-}
-
-/**
  * Skiplist constructor
  * @param max_lvl maximum level - maximum size of skiplist node array
  * @param prob probability of a node to be at next level given it's current maximal level
@@ -122,7 +122,7 @@ void Skiplist::destroy_node(Skiplist_node* node){
 }
 
 /**
- * Randomize maximum level for a specific node in skiplist
+ * Randomize maximum level for a specific node in Skiplist
  * @return randomized level
  * credit: geeksforgeeks.com
  */
@@ -138,7 +138,7 @@ int Skiplist::random_level() {
 }
 
 /**
- * @return true iff skiplist data structure is empty
+ * @return true iff Skiplist data structure is empty
  */
 bool Skiplist::is_empty(){
     Skiplist_node* node = head->get_next_arr()[0];
@@ -150,9 +150,9 @@ bool Skiplist::is_empty(){
 
 /**
  * Locates the predecessors and successors of a new node that is to be inserted
- * @param dist
- * @param preds
- * @param succs
+ * @param dist node's distance from source node
+ * @param preds node's predecessors list
+ * @param succs node's successors list
  * @return pointer to the last (at the moment of traversal) deleted node of the deleted prefix
  */
 Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_node** succs){
@@ -250,7 +250,7 @@ void Skiplist::restructure(){
 }
 
 /**
- * Extract the minimal node from skiplist data structure
+ * Extract the minimal node from Skiplist data structure
  * (minimal distance of a node to the source vertex)
  * @return pointer to the Vertex field of the minimal node
  */
