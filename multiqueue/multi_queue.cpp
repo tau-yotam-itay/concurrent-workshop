@@ -9,6 +9,7 @@
 Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
 {
     C = c;
+    mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(p,SIGQUIT);
     queues_array = new Binary_Heap*[C * P];
     // mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
     for (int i = 0; i < C * P; i++) {
@@ -20,38 +21,41 @@ Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
  * @param v node's vertex
  * @return pointer to new BH_Node
  */
-BH_Node* Multi_Queue::create_node(Vertex* v)
+BH_Node* Multi_Queue::create_node(Vertex* v, int tid)
 {
     //debra enters here
-    BH_Node* node = new BH_Node(v);
+    BH_Node* node = mgr->template allocate<BH_Node>(tid);
+    node->set_properties(v);
     return node;
-}
-
-/**
- * Insert new node to the Multi_Queue priority queue
- * @param vertex
- */
-void Multi_Queue::insert(Vertex* vertex)
-{
-    // enter debra quiscent state
-    volatile bool thrnd_won = false;
-    int rand_queue_index;
-    do {
-        rand_queue_index = rand() % (C * P);
-        thrnd_won = __sync_bool_compare_and_swap(queues_array[rand_queue_index]->get_lock(), false, true);  // Compare and swap
-    } while (!thrnd_won);
-    BH_Node* to_insert_node = create_node(vertex);
-    queues_array[rand_queue_index]->insert(to_insert_node);
-    queues_array[rand_queue_index]->set_lock(false);
-    // exit debra quiscent state
 }
 
 /**
  * Free node's used memory using debra
  * @param node node to be destroyed
  */
-void Multi_Queue::destroy_node(BH_Node* node) {
-    //delete node;
+void Multi_Queue::destroy_node(BH_Node* node, int tid) {
+    mgr->retire(tid,node);
+}
+
+/**
+ * Insert new node to the Multi_Queue priority queue
+ * @param vertex
+ */
+void Multi_Queue::insert(Vertex* vertex, int tid)
+{
+    // enter debra quiscent state
+    mgr->enterQuiescentState(tid);
+    volatile bool thrnd_won = false;
+    int rand_queue_index;
+    do {
+        rand_queue_index = rand() % (C * P);
+        thrnd_won = __sync_bool_compare_and_swap(queues_array[rand_queue_index]->get_lock(), false, true);  // Compare and swap
+    } while (!thrnd_won);
+    BH_Node* to_insert_node = create_node(vertex, tid);
+    queues_array[rand_queue_index]->insert(to_insert_node);
+    queues_array[rand_queue_index]->set_lock(false);
+    mgr->leaveQuiescentState(tid);
+    // exit debra quiscent state
 }
 
 /**
@@ -149,8 +153,9 @@ void Multi_Queue::choose_random_heap(Binary_Heap **bh1, Binary_Heap **bh2) {
 /**
  * Extract node with minimal value (minimum distance of vertex from source) from Multi_Queue
  */
-Vertex* Multi_Queue::extract_min()
+Vertex* Multi_Queue::extract_min(int tid)
 {
+    mgr->enterQuiescentState(tid);
     // enter debra quiscent state
     Binary_Heap *bh1 = NULL, *bh2 = NULL, *chosen_heap = NULL;
 
@@ -164,8 +169,9 @@ Vertex* Multi_Queue::extract_min()
 
     BH_Node* extracted_node = chosen_heap->extract_min();
     Vertex* ret = extracted_node->get_vertex();
-    destroy_node(extracted_node);
+    destroy_node(extracted_node,tid);
     chosen_heap->set_lock(false);
+    mgr->leaveQuiescentState(tid);
     // exit debra quiscent state
     return ret;
 }

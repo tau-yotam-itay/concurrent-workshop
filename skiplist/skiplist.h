@@ -20,7 +20,8 @@ private:
     char pad[CACHE_PADDING_SKIPLIST];
 
 public:
-    Skiplist_node(int level_arg, Vertex* vertex);
+    Skiplist_node();
+    void set_properties(int level_arg, Vertex* vertex);
     bool is_deleted();
     bool is_inserting();
     void set_inserting(bool insert);
@@ -42,19 +43,20 @@ private:
     float next_level_prob;
     Skiplist_node *head;
     Skiplist_node *tail;
+    record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,Skiplist_node> * mgr;
 
     //functions:
     int random_level();
-    Skiplist_node* create_node(int level_arg, Vertex* vertex);
-    void destroy_node(Skiplist_node* node);
+    Skiplist_node* create_node(int level_arg, Vertex* vertex, int tid);
+    void destroy_node(Skiplist_node* node, int tid);
     Skiplist_node* locate_preds(int dist, Skiplist_node** preds, Skiplist_node** succs);
     void restructure();
 
 public:
     Skiplist(int max_lvl, float prob, int offset, int p);
     bool is_empty() override;
-    void insert(Vertex* vertex) override;
-    Vertex* extract_min() override;
+    void insert(Vertex* vertex, int tid) override;
+    Vertex* extract_min(int tid) override;
 };
 
 #endif //CONCURRENT_WORKSHOP_SKIPLIST_H

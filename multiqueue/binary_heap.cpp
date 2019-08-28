@@ -2,12 +2,14 @@
 
 using namespace std;
 
+BH_Node::BH_Node(){}
+
 /**
  * BH_Node constructor
  *
  * @param vertex
  */
-BH_Node::BH_Node(Vertex* vertex)
+void BH_Node::set_properties(Vertex* vertex)
 {
   dist = vertex->get_dist();
   v = vertex;

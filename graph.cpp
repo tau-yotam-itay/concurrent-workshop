@@ -1,5 +1,6 @@
 #include "graph.h"
 #define PRINT_INTERVAL_GRAPH 50000
+#define PRINT_PROGRESS 0
 
 using namespace std;
 
@@ -91,7 +92,7 @@ Graph::Graph(const char* filepath)
   while (fp >> key1 >> key2 >> weight) {
     add_edge(key1, key2, weight);
     c++;
-    if (c % PRINT_INTERVAL_GRAPH == 0) {
+    if (PRINT_PROGRESS && c % PRINT_INTERVAL_GRAPH == 0) {
 
       printf("added %d edges to the graph. \n", c);
     }

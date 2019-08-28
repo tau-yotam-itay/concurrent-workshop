@@ -3,6 +3,8 @@
 
 #include "graph.h"
 #include <semaphore.h>
+#include "recordmgr/record_manager.h"
+
 
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1
@@ -21,8 +23,8 @@ class Priority_Queue
   bool finish;
 
   Priority_Queue(int p);
-  virtual void insert(Vertex* vertex) = 0;
-  virtual Vertex* extract_min() = 0;
+  virtual void insert(Vertex* vertex, int tid) = 0;
+  virtual Vertex* extract_min(int tid) = 0;
   virtual bool is_empty() = 0;
   sem_t* get_sem_mutex();
   volatile bool* get_all_sleep_lock();

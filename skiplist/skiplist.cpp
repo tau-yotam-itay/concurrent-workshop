@@ -3,12 +3,14 @@
 
 #define EMPTY_QUEUE NULL
 
+Skiplist_node::Skiplist_node(){}
+
 /**
  * Skiplist_node constructor
  * @param level_arg the node's level in the skiplist
  * @param vertex
  */
-Skiplist_node::Skiplist_node(int level_arg, Vertex* vertex)
+void Skiplist_node::set_properties(int level_arg, Vertex* vertex)
 {
     dist = vertex->get_dist();
     level = level_arg;
@@ -24,9 +26,19 @@ Skiplist_node::Skiplist_node(int level_arg, Vertex* vertex)
  * @param vertex
  * @return pointer to the newly created node
  */
-Skiplist_node* Skiplist::create_node(int level_arg, Vertex* vertex){
-    return new Skiplist_node(level_arg, vertex);
+Skiplist_node* Skiplist::create_node(int level_arg, Vertex* vertex, int tid){
+    Skiplist_node* new_node = mgr->template allocate<Skiplist_node>(tid);
+    new_node->set_properties(level_arg,vertex);
+    return new_node;
     //switch with debra
+}
+
+/**
+ * Free node's used memory space using debra
+ * @param node destroyed node
+ */
+void Skiplist::destroy_node(Skiplist_node* node, int tid){
+    mgr->retire(tid,node);
 }
 
 /**
@@ -95,7 +107,7 @@ int Skiplist_node::get_dist() {
  * Skiplist constructor
  * @param max_lvl maximum level - maximum size of skiplist node array
  * @param prob probability of a node to be at next level given it's current maximal level
- * @param offset
+ * @param offset - how many logically deleted nodes are allowed in the head of the skiplist
  * @param p total number of threads
  */
 Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(p)
@@ -103,23 +115,19 @@ Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(
     max_level = max_lvl;
     next_level_prob = prob;
     bound_offset = offset;
+    mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,Skiplist_node>(p,SIGQUIT);
 
     Vertex* head_v = new Vertex(INT_MIN, INT_MIN);
     Vertex* tail_v = new Vertex(INT_MAX, INT_MAX);
-    head = new Skiplist_node(max_lvl, head_v);
-    tail = new Skiplist_node(max_lvl, tail_v);
+    head = new Skiplist_node();
+    head->set_properties(max_lvl, head_v);
+    tail = new Skiplist_node();
+    tail->set_properties(max_lvl, tail_v);
     for(int i = 0; i < max_lvl; i++){
         head->get_next_arr()[i] = tail;
     }
 }
 
-/**
- * Free node's used memory space using debra
- * @param node destroyed node
- */
-void Skiplist::destroy_node(Skiplist_node* node){
-
-}
 
 /**
  * Randomize maximum level for a specific node in Skiplist
@@ -186,10 +194,11 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
  * Insert new node to Skiplist data structure
  * @param vertex node's vertex field
  */
-void Skiplist::insert(Vertex* vertex){
+void Skiplist::insert(Vertex* vertex, int tid){
     //enter quicent state
+    mgr->enterQuiescentState(tid);
     int height = random_level(), i = 1;
-    Skiplist_node* new_node = create_node(height, vertex);
+    Skiplist_node* new_node = create_node(height, vertex, tid);
     Skiplist_node* del_node = NULL;
     Skiplist_node **preds = (Skiplist_node**)calloc(max_level,sizeof(Skiplist_node*));
     Skiplist_node **succs = (Skiplist_node**)calloc(max_level,sizeof(Skiplist_node*));
@@ -222,6 +231,7 @@ void Skiplist::insert(Vertex* vertex){
     new_node->set_inserting(false);
     free(preds);
     free(succs);
+    mgr->leaveQuiescentState(tid);
     //exit quicent state
 }
 
@@ -254,7 +264,8 @@ void Skiplist::restructure(){
  * (minimal distance of a node to the source vertex)
  * @return pointer to the Vertex field of the minimal node
  */
-Vertex* Skiplist::extract_min(){
+Vertex* Skiplist::extract_min(int tid){
+    mgr->enterQuiescentState(tid);
     Skiplist_node *x = head, *newhead = NULL, *obshead = x->get_next_arr()[0], *next, *cur;
     int offset = 0;
     bool d = true;
@@ -276,6 +287,7 @@ Vertex* Skiplist::extract_min(){
 
     v = x->get_vertex();
     if(offset < bound_offset){
+        mgr->leaveQuiescentState(tid);
         return v;
     }
     if(newhead == NULL){
@@ -286,9 +298,10 @@ Vertex* Skiplist::extract_min(){
         cur = obshead->get_unmarked_ptr();
         while(cur != newhead){
             next = cur->get_unmarked_ptr()->get_next_arr()[0];
-            destroy_node(cur);
+            destroy_node(cur, tid);
             cur = next->get_unmarked_ptr();
         }
     }
+    mgr->leaveQuiescentState(tid);
     return v;
 }

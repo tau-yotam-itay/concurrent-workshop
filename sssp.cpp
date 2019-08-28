@@ -3,7 +3,7 @@ using namespace std;
 
 typedef struct thread_args {
   Priority_Queue* Q;
-  int* thread_status;
+  bool* thread_status;
   int thread_idx;
 } thread_args;
 
@@ -30,7 +30,7 @@ void export_distances(Graph* g)
  * @param dist current distance fron source vertex
  * @param n neighbors list
  */
-void relax(Priority_Queue* Q, int dist, neighbor* n)
+void relax(Priority_Queue* Q, int dist, neighbor* n, int tid)
 {
   bool locked = false;
   int new_dist = dist + n->weight;  // d' = d(n) + w(v,n)
@@ -41,7 +41,7 @@ void relax(Priority_Queue* Q, int dist, neighbor* n)
 
   if (new_dist < n->v->get_dist()) {  // if distance is smaller - relax and add to Q
     n->v->set_dist(new_dist);
-    Q->insert(n->v);
+    Q->insert(n->v,tid);
     sem_post(Q->get_sem_mutex());
   }
 
@@ -65,20 +65,20 @@ void wake_all_threads(sem_t* sem, int P)
  * @param Q Priority Queue
  * @return true if thread_idx is the single thread currently working.
  */
-bool is_only_worker(int thread_idx, int* threads_status, Priority_Queue* Q)
+bool is_only_worker(int thread_idx, bool* threads_status, Priority_Queue* Q)
 {
     bool locked = false;
     do {
         locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
     } while (!locked);
     for (int i = 0; i < Q->get_P(); i++) {
-        if (i != thread_idx && threads_status[i] == 1) {
-            threads_status[thread_idx] = 0;
+        if (i != thread_idx && threads_status[i] == true) {
+            threads_status[thread_idx] = false;
             Q->set_all_sleep_lock(false);
             return false;
         }
     }
-    threads_status[thread_idx] = 0;
+    threads_status[thread_idx] = false;
     Q->set_all_sleep_lock(false);
     return true;
 }
@@ -92,9 +92,9 @@ void* thread_worker(void* args)
 {
   thread_args* t_args = (thread_args*)args;
   Priority_Queue* Q = t_args->Q;
-  int* thread_status = t_args->thread_status;
+  bool* thread_status = t_args->thread_status;
   int thread_idx = t_args->thread_idx;
-  thread_status[thread_idx] = 1;
+  thread_status[thread_idx] = true;
 
   while (!Q->finish) {
     if ((is_only_worker(thread_idx, thread_status, Q) && Q->is_empty() && !Q->finish)) {  // check if time to terminate
@@ -104,11 +104,11 @@ void* thread_worker(void* args)
     }
 
     sem_wait(Q->get_sem_mutex());
-    thread_status[thread_idx] = 1;
+    thread_status[thread_idx] = true;
     if (Q->finish) {
       break;
     }
-    Vertex* min = Q->extract_min();
+    Vertex* min = Q->extract_min(thread_idx);
     if (!min) {
       continue;
     }
@@ -117,11 +117,11 @@ void* thread_worker(void* args)
 
     neighbor* n = min->get_neighbors();
     while (n != NULL) {  // iterate all neighbors of min
-      relax(Q, dist, n);
+      relax(Q, dist, n, thread_idx);
       n = n->next;
     }
   }
-  thread_status[thread_idx] = 0;
+  thread_status[thread_idx] = false;
   free(args);
   return NULL;
 }
@@ -129,10 +129,10 @@ void* thread_worker(void* args)
 /**
  * Initialize and launch all threads
  * @param Q Priority Queue
- * @param threads_status_arr all threads status (working-1 ,sleeping-0) array
+ * @param threads_status_arr all threads status (working-true ,sleeping-false) array
  * @param threads_arr array of all threads
  */
-void init_threads(Priority_Queue* Q, int* threads_status_arr, pthread_t* threads_arr)
+void init_threads(Priority_Queue* Q, bool* threads_status_arr, pthread_t* threads_arr)
 {
   for (int i = 0; i < Q->get_P(); i++) {
     thread_args* args = (thread_args*)calloc(1, sizeof(thread_args));
@@ -160,7 +160,7 @@ void init_threads(Priority_Queue* Q, int* threads_status_arr, pthread_t* threads
  */
 void dijkstra(Priority_Queue* Q, Vertex* s)
 {
-  int* threads_status_arr = (int*)calloc(Q->get_P(), sizeof(int));
+  bool* threads_status_arr = (bool*)calloc(Q->get_P(), sizeof(bool));
   pthread_t* threads_arr = (pthread_t*)calloc(Q->get_P(), sizeof(pthread_t));
   if (threads_arr == NULL || threads_status_arr == NULL) {
     perror("malloc");
@@ -168,7 +168,7 @@ void dijkstra(Priority_Queue* Q, Vertex* s)
   }
 
   s->set_dist(0);
-  Q->insert(s);
+  Q->insert(s,Q->get_P());
   if (Q->is_empty()) {
     printf("empty\n");
   }

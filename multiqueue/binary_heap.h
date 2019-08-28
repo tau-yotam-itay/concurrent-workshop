@@ -16,7 +16,8 @@ class BH_Node
   char pad[CACHE_PADDING_BHEAP];
 
  public:
-  BH_Node(Vertex* vertex);
+  BH_Node();
+  void set_properties(Vertex* vertex);
   BH_Node(Vertex* vertex, int distance); //delete?
   int get_dist();
   Vertex* get_vertex();

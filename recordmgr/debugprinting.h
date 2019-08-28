@@ -39,14 +39,18 @@
 }
 
 // set __trace to true if you want many paths through the code to be traced with cout<<"..." statements
-#ifndef TRACE_DEFINED
-std::atomic_bool ___trace(0);
-std::atomic_bool ___validateops(0);
-#define TRACE_DEFINED
-#define TRACE_TOGGLE {bool ___t = ___trace; ___trace = !___t;}
-#define TRACE_ON {___trace = true;}
-#define TRACE if(___trace)
-#endif
+//#ifndef TRACE_DEFINED
+//std::atomic_bool ___trace(0);
+//std::atomic_bool ___validateops(0);
+//#define TRACE_DEFINED
+//#define TRACE_TOGGLE {bool ___t = ___trace; ___trace = !___t;}
+//#define TRACE_ON {___trace = true;}
+//#define TRACE if(___trace)
+//#endif
+
+#define TRACE_TOGGLE
+#define TRACE_ON 
+#define TRACE if(false)
 
 #endif	/* DEBUGPRINTING_H */
 
