@@ -24,12 +24,16 @@ int main(int argc, const char* argv[])
   srand(RAND_SEED);
 
   // Create priority queue
-  Priority_Queue* Q = new Multi_Queue(C_CONSTANT, num_of_threads);
+  Multi_Queue* Q = new Multi_Queue(C_CONSTANT, num_of_threads);
   // Start timer
   auto start = std::chrono::high_resolution_clock::now();
 
   // Execute SSSP
   dijkstra(Q, g.get_source());
+
+  //Free allocated space
+  Q->free_heaps();
+    g.free_graph();
 
   // Stop timer and print result
   auto finish = std::chrono::high_resolution_clock::now();

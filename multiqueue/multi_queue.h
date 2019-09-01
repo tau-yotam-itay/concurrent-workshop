@@ -21,8 +21,8 @@ class Multi_Queue: public Priority_Queue
 
  public:
     Binary_Heap** queues_array;
-
     Multi_Queue(int c, int p);
+    void free_heaps();
     void insert(Vertex* vertex, int tid) override;
     bool is_empty() override;
     Vertex* extract_min(int tid) override;

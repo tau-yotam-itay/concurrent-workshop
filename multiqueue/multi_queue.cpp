@@ -11,10 +11,21 @@ Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
     C = c;
     mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(p,SIGQUIT);
     queues_array = new Binary_Heap*[C * P];
-    // mgr = new record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node>(P_CONSTANT,SIGQUIT);
     for (int i = 0; i < C * P; i++) {
         queues_array[i] = new Binary_Heap();
     }
+}
+
+/**
+ * Free heaps allocated memory
+ */
+void Multi_Queue::free_heaps(){
+    int i;
+
+    for(i = 0; i < C * P; i++){
+        delete(queues_array[i]);
+    }
+    delete(queues_array);
 }
 
 /**
@@ -23,7 +34,6 @@ Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
  */
 BH_Node* Multi_Queue::create_node(Vertex* v, int tid)
 {
-    //debra enters here
     BH_Node* node = mgr->template allocate<BH_Node>(tid);
     node->set_properties(v);
     return node;
@@ -43,7 +53,7 @@ void Multi_Queue::destroy_node(BH_Node* node, int tid) {
  */
 void Multi_Queue::insert(Vertex* vertex, int tid)
 {
-    // enter debra quiscent state
+    // enter debra quiescent state
     mgr->enterQuiescentState(tid);
     volatile bool thrnd_won = false;
     int rand_queue_index;
@@ -55,7 +65,7 @@ void Multi_Queue::insert(Vertex* vertex, int tid)
     queues_array[rand_queue_index]->insert(to_insert_node);
     queues_array[rand_queue_index]->set_lock(false);
     mgr->leaveQuiescentState(tid);
-    // exit debra quiscent state
+    // exit debra quiescent state
 }
 
 /**
