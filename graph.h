@@ -30,6 +30,17 @@ class Vertex
   neighbor* get_neighbors();
   volatile bool* get_lock();
   void set_lock(bool b);
+
+    static void operator delete(void* ptr, std::size_t sz)
+    {
+        //cout << "custom delete for size " << sz <<endl;
+        delete (ptr); // ::operator delete(ptr) can also be used
+    }
+    static void operator delete[](void* ptr, std::size_t sz)
+    {
+        //cout << "custom delete for size " << sz <<endl;
+        delete (ptr); // ::operator delete(ptr) can also be used
+    }
 };
 
 class Graph
@@ -43,7 +54,6 @@ class Graph
 
  public:
   Vertex** vertices;
-
   Graph(const char* filepath);
   void free_graph();
   Vertex* get_source();

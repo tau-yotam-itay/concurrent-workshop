@@ -30,6 +30,17 @@ public:
     Skiplist_node **get_next_arr();
     Vertex *get_vertex();
     int get_dist();
+
+    static void operator delete(void* ptr, std::size_t sz)
+    {
+        //cout << "custom delete for size " << sz <<endl;
+        delete (ptr); // ::operator delete(ptr) can also be used
+    }
+    static void operator delete[](void* ptr, std::size_t sz)
+    {
+        //cout << "custom delete for size " << sz <<endl;
+        delete (ptr); // ::operator delete(ptr) can also be used
+    }
 };
 
 
@@ -58,6 +69,12 @@ public:
     bool is_empty() override;
     void insert(Vertex* vertex, int tid) override;
     Vertex* extract_min(int tid) override;
+
+    static void operator delete(void* ptr, std::size_t sz)
+    {
+        //cout << "custom delete for size " << sz <<endl;
+        delete (ptr); // ::operator delete(ptr) can also be used
+    }
 };
 
 #endif //CONCURRENT_WORKSHOP_SKIPLIST_H

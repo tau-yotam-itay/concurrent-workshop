@@ -99,20 +99,23 @@ Graph::Graph(const char* filepath)
   }
 }
 
+/**
+ * Free Graph allocated memory
+ */
 void Graph::free_graph(){
     int i;
     neighbor *n, *temp;
 
     for(i = 0; i < number_of_vertices; i++){
         n = vertices[i]->get_neighbors();
-        while (n != NULL) {  // iterate all neighbors of min
+        while (n != NULL) {  // iterate all neighbors of vertices[i]
             temp = n;
             n = n->next;
-            delete(temp);
+            delete temp;
         }
-        delete(vertices[i]);
+        delete vertices[i];
     }
-
+    free(vertices);
 }
 
 /**

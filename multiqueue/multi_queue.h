@@ -5,14 +5,12 @@
 
 #include "binary_heap.h"
 #include "../priority_queue.h"
-//#include "../recordmgr/record_manager.h"
 
 class Multi_Queue: public Priority_Queue
 {
  private:
   int C;
   record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,BH_Node> * mgr;
-
   BH_Node* create_node(Vertex* v, int tid);
   void destroy_node(BH_Node* node, int tid);
   void choose_one_heap(Binary_Heap* bh1, Binary_Heap* bh2, Binary_Heap** chosen_heap);
@@ -26,6 +24,12 @@ class Multi_Queue: public Priority_Queue
     void insert(Vertex* vertex, int tid) override;
     bool is_empty() override;
     Vertex* extract_min(int tid) override;
+
+    static void operator delete(void* ptr, std::size_t sz)
+    {
+        //cout << "custom delete for size " << sz <<endl;
+        delete (ptr); // ::operator delete(ptr) can also be used
+    }
 };
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_MULTI_QUEUE_H

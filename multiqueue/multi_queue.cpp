@@ -23,9 +23,9 @@ void Multi_Queue::free_heaps(){
     int i;
 
     for(i = 0; i < C * P; i++){
-        delete(queues_array[i]);
+        delete queues_array[i];
     }
-    delete(queues_array);
+    delete[] queues_array;
 }
 
 /**

@@ -37,6 +37,7 @@ int main(int argc, const char* argv[])
 
   // Free allocated space
   Q->free_sentinels();
+  delete Q;
   g.free_graph();
 
   // Stop timer and print result

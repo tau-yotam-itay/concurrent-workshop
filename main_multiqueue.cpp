@@ -33,7 +33,8 @@ int main(int argc, const char* argv[])
 
   //Free allocated space
   Q->free_heaps();
-    g.free_graph();
+  delete Q;
+  g.free_graph();
 
   // Stop timer and print result
   auto finish = std::chrono::high_resolution_clock::now();
