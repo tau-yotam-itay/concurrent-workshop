@@ -128,6 +128,14 @@ Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(
     }
 }
 
+/**
+ * free Skiplist's head and tail sentinels allocated memory
+ */
+void Skiplist::free_sentinels(){
+    delete(head);
+    delete(tail);
+}
+
 
 /**
  * Randomize maximum level for a specific node in Skiplist

@@ -54,6 +54,7 @@ private:
 
 public:
     Skiplist(int max_lvl, float prob, int offset, int p);
+    void free_sentinels();
     bool is_empty() override;
     void insert(Vertex* vertex, int tid) override;
     Vertex* extract_min(int tid) override;

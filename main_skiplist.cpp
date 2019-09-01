@@ -1,6 +1,5 @@
 #include "sssp.h"
 #include "skiplist/skiplist.h"
-//#include "tests.h"
 #include <chrono>
 
 
@@ -28,13 +27,17 @@ int main(int argc, const char* argv[])
 
   // Create priority queue
   record_manager<reclaimer_debra<>,allocator_new<>,pool_none<>,Skiplist_node> * mgr;
-  Priority_Queue* Q = new Skiplist(MAX_LVL, LEVEL_PROB, BOUND_OFFSET, num_of_threads);
+  Skiplist* Q = new Skiplist(MAX_LVL, LEVEL_PROB, BOUND_OFFSET, num_of_threads);
 
   // Start timer
   auto start = std::chrono::high_resolution_clock::now();
 
   // Execute SSSP
   dijkstra(Q, g.get_source());
+
+  // Free allocated space
+  Q->free_sentinels();
+  g.free_graph();
 
   // Stop timer and print result
   auto finish = std::chrono::high_resolution_clock::now();

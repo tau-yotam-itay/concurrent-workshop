@@ -99,6 +99,22 @@ Graph::Graph(const char* filepath)
   }
 }
 
+void Graph::free_graph(){
+    int i;
+    neighbor *n, *temp;
+
+    for(i = 0; i < number_of_vertices; i++){
+        n = vertices[i]->get_neighbors();
+        while (n != NULL) {  // iterate all neighbors of min
+            temp = n;
+            n = n->next;
+            delete(temp);
+        }
+        delete(vertices[i]);
+    }
+
+}
+
 /**
  * Add new edge to graph
  * @param key1 vertex 1 key

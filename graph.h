@@ -45,6 +45,7 @@ class Graph
   Vertex** vertices;
 
   Graph(const char* filepath);
+  void free_graph();
   Vertex* get_source();
   int get_vertices_num();
 };
