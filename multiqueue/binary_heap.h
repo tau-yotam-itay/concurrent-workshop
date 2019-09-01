@@ -18,7 +18,7 @@ class BH_Node
  public:
   BH_Node();
   void set_properties(Vertex* vertex);
-  BH_Node(Vertex* vertex, int distance); //delete?
+  BH_Node(Vertex* vertex, int distance);
   int get_dist();
   Vertex* get_vertex();
   BH_Node* get_parent();
@@ -62,17 +62,6 @@ class Binary_Heap
   void insert(BH_Node* node);
   void disconnect_node(BH_Node* node);
   BH_Node* extract_min();
-
-/*    static void operator delete(void* ptr, std::size_t sz)
-    {
-        //cout << "custom delete for size " << sz <<endl;
-        delete (ptr); // ::operator delete(ptr) can also be used
-    }
-    static void operator delete[](void* ptr, std::size_t sz)
-    {
-        //cout << "custom delete for size " << sz <<endl;
-        delete (ptr); // ::operator delete(ptr) can also be used
-    }*/
 };
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H

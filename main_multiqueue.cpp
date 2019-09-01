@@ -2,18 +2,6 @@
 #include "multiqueue/multi_queue.h"
 #include <chrono>
 
-/**
- * Free program's dynamically allocated space
- * @param Q Priority_Queue
- * @param g Graph
- */
-/*void free_allocated_space(Multi_Queue** Q, Graph* g){
-    (*Q)->free_heaps();
-    delete (*Q);
-    g->free_graph();
-    delete g;
-}*/
-
 int main(int argc, const char* argv[])
 {
   int num_of_threads;
@@ -30,7 +18,6 @@ int main(int argc, const char* argv[])
   }
   // Build graph from input
   Graph g(argv[1]);
-  // printf("done building graph. \n");
 
   // Set random seed for consistent results
   srand(RAND_SEED);
@@ -51,7 +38,7 @@ int main(int argc, const char* argv[])
   export_distances(&g);
 
   //Free allocated space
-  //free_allocated_space(&Q, &g);
+  delete Q;
 
   return 0;
 }

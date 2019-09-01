@@ -18,14 +18,14 @@ Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
 /**
  * Free heaps allocated memory
  */
-/*void Multi_Queue::free_heaps(){
-    int i;
+Multi_Queue::~Multi_Queue(){
 
-    for(i = 0; i < C * P; i++){
+    for(int i = 0; i < C * P; i++){
         delete queues_array[i];
     }
-    delete[] queues_array;
-}*/
+    free(queues_array);
+    delete mgr;
+}
 
 /**
  * @param v node's vertex

@@ -29,6 +29,20 @@ Vertex::Vertex(int k, int new_dist)
 }
 
 /**
+ * Free Vertex's allocated memory
+ */
+Vertex::~Vertex(){
+    neighbor *n, *temp;
+
+    n = get_neighbors();
+    while (n != NULL) {  // iterate all neighbors of vertex
+        temp = n;
+        n = n->next;
+        delete temp;
+    }
+}
+
+/**
  * @return distance of current vertex from source vertex
  */
 int Vertex::get_dist() { return dist; }
@@ -102,21 +116,13 @@ Graph::Graph(const char* filepath)
 /**
  * Free Graph allocated memory
  */
-/*void Graph::free_graph(){
-    int i;
-    neighbor *n, *temp;
+Graph::~Graph(){
 
-    for(i = 0; i < number_of_vertices; i++){
-        n = vertices[i]->get_neighbors();
-        while (n != NULL) {  // iterate all neighbors of vertices[i]
-            temp = n;
-            n = n->next;
-            delete temp;
-        }
+    for(int i = 0; i < number_of_vertices; i++){
         delete vertices[i];
     }
     free(vertices);
-}*/
+}
 
 /**
  * Add new edge to graph

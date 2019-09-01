@@ -20,16 +20,10 @@ class Multi_Queue: public Priority_Queue
  public:
     Binary_Heap** queues_array;
     Multi_Queue(int c, int p);
-    //void free_heaps();
+    ~Multi_Queue();
     void insert(Vertex* vertex, int tid) override;
     bool is_empty() override;
     Vertex* extract_min(int tid) override;
-/*
-    static void operator delete(void* ptr, std::size_t sz)
-    {
-        //cout << "custom delete for size " << sz <<endl;
-        delete (ptr); // ::operator delete(ptr) can also be used
-    }*/
 };
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_MULTI_QUEUE_H

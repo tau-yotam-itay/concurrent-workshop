@@ -3,11 +3,14 @@
 
 #define EMPTY_QUEUE NULL
 
+/**
+ * Skiplist_node constructor (empty - for debra usage)
+ */
 Skiplist_node::Skiplist_node(){}
 
 /**
- * Skiplist_node constructor
- * @param level_arg the node's level in the skiplist
+ * Sets (initialization) fields of a Skiplist_node
+ * @param level_arg the node's level in the Skiplist
  * @param vertex
  */
 void Skiplist_node::set_properties(int level_arg, Vertex* vertex)
@@ -18,7 +21,7 @@ void Skiplist_node::set_properties(int level_arg, Vertex* vertex)
     memset(next_arr, 0, sizeof(Skiplist_node*)*(level+1));
     v = vertex;
     inserting = false;
-};
+}
 
 /**
  * Create new Skiplist_node using debra.
@@ -30,7 +33,6 @@ Skiplist_node* Skiplist::create_node(int level_arg, Vertex* vertex, int tid){
     Skiplist_node* new_node = mgr->template allocate<Skiplist_node>(tid);
     new_node->set_properties(level_arg,vertex);
     return new_node;
-    //switch with debra
 }
 
 /**
@@ -129,13 +131,13 @@ Skiplist::Skiplist(int max_lvl, float prob, int offset, int p) : Priority_Queue(
 }
 
 /**
- * free Skiplist's head and tail sentinels allocated memory
+ * Free Skiplist's dynamically allocated memory space
  */
-void Skiplist::free_sentinels(){
+Skiplist::~Skiplist(){
+    delete mgr;
     delete head;
     delete tail;
 }
-
 
 /**
  * Randomize maximum level for a specific node in Skiplist
