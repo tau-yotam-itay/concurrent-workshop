@@ -2,6 +2,18 @@
 #include "multiqueue/multi_queue.h"
 #include <chrono>
 
+/**
+ * Free program's dynamically allocated space
+ * @param Q Priority_Queue
+ * @param g Graph
+ */
+/*void free_allocated_space(Multi_Queue** Q, Graph* g){
+    (*Q)->free_heaps();
+    delete (*Q);
+    g->free_graph();
+    delete g;
+}*/
+
 int main(int argc, const char* argv[])
 {
   int num_of_threads;
@@ -31,16 +43,15 @@ int main(int argc, const char* argv[])
   // Execute SSSP
   dijkstra(Q, g.get_source());
 
-  //Free allocated space
-  Q->free_heaps();
-  delete Q;
-  g.free_graph();
-
   // Stop timer and print result
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish - start;
   printf("%d\t%f\n", num_of_threads,elapsed.count());
 
   export_distances(&g);
+
+  //Free allocated space
+  //free_allocated_space(&Q, &g);
+
   return 0;
 }

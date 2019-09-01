@@ -1,5 +1,4 @@
 #include "multi_queue.h"
-//#include "../recordmgr/record_manager.h"
 
 /**
  * Multi Queue constructor
@@ -19,14 +18,14 @@ Multi_Queue::Multi_Queue(int c, int p) : Priority_Queue(p)
 /**
  * Free heaps allocated memory
  */
-void Multi_Queue::free_heaps(){
+/*void Multi_Queue::free_heaps(){
     int i;
 
     for(i = 0; i < C * P; i++){
         delete queues_array[i];
     }
     delete[] queues_array;
-}
+}*/
 
 /**
  * @param v node's vertex
@@ -64,8 +63,8 @@ void Multi_Queue::insert(Vertex* vertex, int tid)
     BH_Node* to_insert_node = create_node(vertex, tid);
     queues_array[rand_queue_index]->insert(to_insert_node);
     queues_array[rand_queue_index]->set_lock(false);
-    mgr->leaveQuiescentState(tid);
     // exit debra quiescent state
+    mgr->leaveQuiescentState(tid);
 }
 
 /**
@@ -166,7 +165,7 @@ void Multi_Queue::choose_random_heap(Binary_Heap **bh1, Binary_Heap **bh2) {
 Vertex* Multi_Queue::extract_min(int tid)
 {
     mgr->enterQuiescentState(tid);
-    // enter debra quiscent state
+    // enter debra quiescent state
     Binary_Heap *bh1 = NULL, *bh2 = NULL, *chosen_heap = NULL;
 
     do {
@@ -181,7 +180,7 @@ Vertex* Multi_Queue::extract_min(int tid)
     Vertex* ret = extracted_node->get_vertex();
     destroy_node(extracted_node,tid);
     chosen_heap->set_lock(false);
+    // exit debra quiescent state
     mgr->leaveQuiescentState(tid);
-    // exit debra quiscent state
     return ret;
 }

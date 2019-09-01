@@ -63,7 +63,7 @@ class Binary_Heap
   void disconnect_node(BH_Node* node);
   BH_Node* extract_min();
 
-    static void operator delete(void* ptr, std::size_t sz)
+/*    static void operator delete(void* ptr, std::size_t sz)
     {
         //cout << "custom delete for size " << sz <<endl;
         delete (ptr); // ::operator delete(ptr) can also be used
@@ -72,7 +72,7 @@ class Binary_Heap
     {
         //cout << "custom delete for size " << sz <<endl;
         delete (ptr); // ::operator delete(ptr) can also be used
-    }
+    }*/
 };
 
 #endif  // CONCURRENT_WORKSHOP_MASTER_BINARY_HEAP_H

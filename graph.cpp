@@ -102,7 +102,7 @@ Graph::Graph(const char* filepath)
 /**
  * Free Graph allocated memory
  */
-void Graph::free_graph(){
+/*void Graph::free_graph(){
     int i;
     neighbor *n, *temp;
 
@@ -116,7 +116,7 @@ void Graph::free_graph(){
         delete vertices[i];
     }
     free(vertices);
-}
+}*/
 
 /**
  * Add new edge to graph
