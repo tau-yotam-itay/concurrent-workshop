@@ -2,11 +2,13 @@
 
 using namespace std;
 
+/**
+ * BH_Node constructor (empty - for debra usage)
+ */
 BH_Node::BH_Node(){}
 
 /**
- * BH_Node constructor
- *
+ * Sets (initialization) fields of a BH_Node
  * @param vertex
  */
 void BH_Node::set_properties(Vertex* vertex)
@@ -20,13 +22,11 @@ void BH_Node::set_properties(Vertex* vertex)
 
 /**
  * BH_Node constructor (with distance initialization)
- *
  * @param vertex
  * @param distance new distance from source vertex
  */
 BH_Node::BH_Node(Vertex* vertex, int distance)
 {
-  // maybe call the default constructor instead
   dist = distance;
   v = vertex;
   parent = NULL;
@@ -138,7 +138,7 @@ Binary_Heap::Binary_Heap()
 {
   min_node = NULL;
   last_node = NULL;
-  volatile bool lock = false;
+  lock = false;
 }
 
 bool Binary_Heap::is_empty() { return min_node == NULL; }

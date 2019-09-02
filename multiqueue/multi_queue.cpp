@@ -23,7 +23,6 @@ Multi_Queue::~Multi_Queue(){
     for(int i = 0; i < C * P; i++){
         delete queues_array[i];
     }
-    free(queues_array);
     delete mgr;
 }
 

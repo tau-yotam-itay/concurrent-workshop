@@ -36,8 +36,6 @@ int main(int argc, const char* argv[])
   printf("%d\t%f\n", num_of_threads,elapsed.count());
 
   export_distances(&g);
-
-  //Free allocated space
   delete Q;
 
   return 0;
