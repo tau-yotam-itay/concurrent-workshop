@@ -2,9 +2,8 @@
 #define CONCURRENT_WORKSHOP_PRIORITY_QUEUE_H
 
 #include "graph.h"
-#include <semaphore.h>
 #include "recordmgr/record_manager.h"
-
+#include <semaphore.h>
 
 #define THREAD_SHARED 0
 #define SEMAPHORE_INIT_VALUE 1

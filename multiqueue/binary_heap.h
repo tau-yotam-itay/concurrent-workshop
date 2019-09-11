@@ -3,7 +3,7 @@
 
 #include "../graph.h"
 
-#define CACHE_PADDING_BHEAP 88 //128-sizeof(BH_Node)
+#define CACHE_PADDING_BHEAP 24 //64-sizeof(BH_Node)
 
 class BH_Node
 {

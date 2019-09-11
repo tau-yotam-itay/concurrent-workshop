@@ -6,7 +6,7 @@
 #define MAX_LVL 25
 #define LEVEL_PROB 0.5
 #define BOUND_OFFSET 50
-#define CACHE_PADDING_SKIPLIST 96 //128-sizeof(Skiplist_node)
+#define CACHE_PADDING_SKIPLIST 32 //64-sizeof(Skiplist_node)
 
 class Skiplist_node
 {

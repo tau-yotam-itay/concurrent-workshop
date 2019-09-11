@@ -41,7 +41,7 @@ void relax(Priority_Queue* Q, int dist, neighbor* n, int tid)
 
   if (new_dist < n->v->get_dist()) {  // if distance is smaller - relax and add to Q
     n->v->set_dist(new_dist);
-    Q->insert(n->v,tid);
+    Q->insert(n->v, tid);
     sem_post(Q->get_sem_mutex());
   }
 
@@ -54,9 +54,9 @@ void relax(Priority_Queue* Q, int dist, neighbor* n, int tid)
  */
 void wake_all_threads(sem_t* sem, int P)
 {
-    for (int i = 0; i < P; i++) {
-        sem_post(sem);
-    }
+  for (int i = 0; i < P; i++) {
+    sem_post(sem);
+  }
 }
 
 /**
@@ -67,20 +67,20 @@ void wake_all_threads(sem_t* sem, int P)
  */
 bool is_only_worker(int thread_idx, bool* threads_status, Priority_Queue* Q)
 {
-    bool locked = false;
-    do {
-        locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
-    } while (!locked);
-    for (int i = 0; i < Q->get_P(); i++) {
-        if (i != thread_idx && threads_status[i] == true) {
-            threads_status[thread_idx] = false;
-            Q->set_all_sleep_lock(false);
-            return false;
-        }
+  bool locked = false;
+  do {
+    locked = __sync_bool_compare_and_swap(Q->get_all_sleep_lock(), false, true);
+  } while (!locked);
+  for (int i = 0; i < Q->get_P(); i++) {
+    if (i != thread_idx && threads_status[i] == true) {
+      threads_status[thread_idx] = false;
+      Q->set_all_sleep_lock(false);
+      return false;
     }
-    threads_status[thread_idx] = false;
-    Q->set_all_sleep_lock(false);
-    return true;
+  }
+  threads_status[thread_idx] = false;
+  Q->set_all_sleep_lock(false);
+  return true;
 }
 
 /**
@@ -168,7 +168,7 @@ void dijkstra(Priority_Queue* Q, Vertex* s)
   }
 
   s->set_dist(0);
-  Q->insert(s,Q->get_P());
+  Q->insert(s, Q->get_P());
   if (Q->is_empty()) {
     printf("empty\n");
   }

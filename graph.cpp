@@ -31,15 +31,16 @@ Vertex::Vertex(int k, int new_dist)
 /**
  * Free Vertex's allocated memory
  */
-Vertex::~Vertex(){
-    neighbor *n, *temp;
+Vertex::~Vertex()
+{
+  neighbor *n, *temp;
 
-    n = get_neighbors();
-    while (n != NULL) {  // iterate all neighbors of vertex
-        temp = n;
-        n = n->next;
-        delete temp;
-    }
+  n = get_neighbors();
+  while (n != NULL) {  // iterate all neighbors of vertex
+    temp = n;
+    n = n->next;
+    delete temp;
+  }
 }
 
 /**
@@ -116,12 +117,13 @@ Graph::Graph(const char* filepath)
 /**
  * Free Graph allocated memory
  */
-Graph::~Graph(){
+Graph::~Graph()
+{
 
-    for(int i = 0; i < number_of_vertices; i++){
-        delete vertices[i];
-    }
-    free(vertices);
+  for (int i = 0; i < number_of_vertices; i++) {
+    delete vertices[i];
+  }
+  free(vertices);
 }
 
 /**
@@ -132,18 +134,18 @@ Graph::~Graph(){
  */
 void Graph::add_edge(int key1, int key2, int weight)
 {
-    Vertex* v1 = vertices[key1];
-    Vertex* v2 = vertices[key2];
-    if (!v1) {
-        v1 = new Vertex(key1);
-        vertices[key1] = v1;
-    }
-    if (!v2) {
-        v2 = new Vertex(key2);
-        vertices[key2] = v2;
-    }
-    v1->add_neighbor(v2, weight);
-    v2->add_neighbor(v1, weight);
+  Vertex* v1 = vertices[key1];
+  Vertex* v2 = vertices[key2];
+  if (!v1) {
+    v1 = new Vertex(key1);
+    vertices[key1] = v1;
+  }
+  if (!v2) {
+    v2 = new Vertex(key2);
+    vertices[key2] = v2;
+  }
+  v1->add_neighbor(v2, weight);
+  v2->add_neighbor(v1, weight);
 }
 
 /**
