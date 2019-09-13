@@ -27,8 +27,7 @@ int main(int argc, const char* argv[])
   // Stop timer and print result
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish - start;
-  printf("%d\t%f\n", num_of_threads, elapsed.count());
-  // printf("Number of threads: %d, elapsed time: %f.\n", num_of_threads, elapsed.count());
+  printf("Number of threads: %d, elapsed time: %f.\n", num_of_threads, elapsed.count());
   // Export distances to output file
   export_distances(&g);
   delete Q;

@@ -284,6 +284,7 @@ Vertex* Skiplist::extract_min(int tid){
     do{
         next = x->get_next_arr()[0];
         if(next->get_unmarked_ptr() == tail){
+            mgr->leaveQuiescentState(tid);
             return EMPTY_QUEUE;
         }
         if (x->is_inserting() && newhead == NULL){
@@ -296,14 +297,16 @@ Vertex* Skiplist::extract_min(int tid){
     }while(d);
 
     v = x->get_vertex();
+
+    if(newhead == NULL){
+        newhead = x;
+    }
     if(offset < bound_offset){
         mgr->leaveQuiescentState(tid);
         return v;
     }
-    if(newhead == NULL){
-        newhead = x;
-    }
-    if(__sync_bool_compare_and_swap(&head->get_next_arr()[0], obshead, newhead->get_marked_ptr())){ //maybe need to get marked also obshead?
+
+    if(__sync_bool_compare_and_swap(&head->get_next_arr()[0], obshead, newhead->get_marked_ptr())){
         restructure();
         cur = obshead->get_unmarked_ptr();
         while(cur != newhead){

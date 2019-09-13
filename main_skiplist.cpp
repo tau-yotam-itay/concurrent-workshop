@@ -19,7 +19,6 @@ int main(int argc, const char* argv[])
   // Set random seed for consistent results
   srand(RAND_SEED);
   // Create priority queue
-  record_manager<reclaimer_debra<>, allocator_new<>, pool_none<>, Skiplist_node>* mgr;
   Skiplist* Q = new Skiplist(MAX_LVL, LEVEL_PROB, BOUND_OFFSET, num_of_threads);
   // Start timer
   auto start = std::chrono::high_resolution_clock::now();
@@ -28,8 +27,7 @@ int main(int argc, const char* argv[])
   // Stop timer and print result
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish - start;
-  printf("%d\t%f\n", num_of_threads, elapsed.count());
-  // printf("Number of threads: %d, elapsed time: %f.\n", num_of_threads, elapsed.count());
+  printf("Number of threads: %d, elapsed time: %f.\n", num_of_threads, elapsed.count());
   // Export distances to output file
   export_distances(&g);
   delete Q;
