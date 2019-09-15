@@ -220,7 +220,16 @@ void Skiplist::insert(Vertex* vertex, int tid){
     new_node->set_inserting(true);
     do{
         del_node = locate_preds(vertex->get_dist(), preds, succs);
+        /* return if key already exists, i.e., is present in a non-deleted node */
+        if (succs[0]->get_dist() == vertex->get_dist() && succs[0]->get_vertex() == vertex &&
+        !(preds[0]->get_next_arr()[0]->is_deleted()) && preds[0]->get_next_arr()[0] == succs[0]) {
+            new_node->set_inserting(false);
+            destroy_node(new_node, tid);
+            mgr->leaveQuiescentState(tid);
+            return;
+        }
         new_node->get_next_arr()[0] = succs[0];
+
     }while(!__sync_bool_compare_and_swap(&preds[0]->get_next_arr()[0], succs[0], new_node));
 
     while(i <= height){
@@ -242,7 +251,7 @@ void Skiplist::insert(Vertex* vertex, int tid){
     free(preds);
     free(succs);
     mgr->leaveQuiescentState(tid);
-    //exit quicent state
+    //exit quiescent state
 }
 
 /**

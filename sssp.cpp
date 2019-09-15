@@ -15,7 +15,7 @@ void export_distances(Graph* g)
 {
   int dist;
   ofstream outputFile;
-  outputFile.open("our_distances");
+  outputFile.open("sssp_distances");
   for (int i = 0; i < g->get_vertices_num(); i++) {
     dist = g->vertices[i]->get_dist();
     outputFile << dist << endl;

@@ -15,7 +15,7 @@ private:
     Vertex* v;
     int dist;
     int level;
-    bool inserting;
+    volatile bool inserting;
     char pad[CACHE_PADDING_SKIPLIST];
 
 public:
@@ -54,7 +54,6 @@ private:
 public:
     Skiplist(int max_lvl, float prob, int offset, int p);
     ~Skiplist();
-    void free_sentinels();
     bool is_empty() override;
     void insert(Vertex* vertex, int tid) override;
     Vertex* extract_min(int tid) override;
