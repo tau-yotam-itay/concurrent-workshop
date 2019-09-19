@@ -205,7 +205,7 @@ Skiplist_node* Skiplist::locate_preds(int dist, Skiplist_node** preds, Skiplist_
  * @param vertex node's vertex field
  */
 void Skiplist::insert(Vertex* vertex, int tid){
-    //enter quicent state
+    //enter quiescent state
     mgr->enterQuiescentState(tid);
     int height = random_level(), i = 1;
     Skiplist_node* new_node = create_node(height, vertex, tid);
@@ -220,7 +220,7 @@ void Skiplist::insert(Vertex* vertex, int tid){
     new_node->set_inserting(true);
     do{
         del_node = locate_preds(vertex->get_dist(), preds, succs);
-        /* return if key already exists, i.e., is present in a non-deleted node */
+        // return if key already exists
         if (succs[0]->get_dist() == vertex->get_dist() && succs[0]->get_vertex() == vertex &&
         !(preds[0]->get_next_arr()[0]->is_deleted()) && preds[0]->get_next_arr()[0] == succs[0]) {
             new_node->set_inserting(false);
